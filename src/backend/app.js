@@ -7,6 +7,7 @@ import rest from '@feathersjs/express/rest';
 import socketio from '@feathersjs/socketio';
 import bodyParser from 'body-parser';
 import allServices from './services/';
+import morgan from 'morgan';
 
 const app = express(feathers());
 
@@ -15,11 +16,12 @@ app
     .configure(socketio())
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended : true}))
-    .use(express.static(path.join(process.cwd(), 'public')));
+    .use(express.static(path.join(process.cwd(), 'public')))
+    .use(morgan('dev'));
 
 
 const server = async () => {
-    const db = await MongoClient.connect('mongodb://localhost:27017/mechatronics');
+    const db = (await MongoClient.connect('mongodb://localhost:27017/mechatronics')).db('mechatronics');
     app.configure(allServices(db));
     return app;
 }

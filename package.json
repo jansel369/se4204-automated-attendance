@@ -22,6 +22,7 @@
     "mobx": "^3.6.1",
     "mobx-react": "^4.4.2",
     "mongodb": "^3.0.4",
+    "morgan": "^1.9.0",
     "react": "^16.2.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
