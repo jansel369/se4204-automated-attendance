@@ -26,9 +26,6 @@ void setup() {
   reset();
   delay(2000);
   connect();
-//  const char data[] = "1234567890";
-//  httppost();
-//  httppost("/dogs", 10, data);
 //  espSetup();/
 
 //  espSetup();/
@@ -38,7 +35,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 //  testConnection();////
+//  delay(3000);
   httppost();
+  delay(5000);
 }
 
 void reset() {
@@ -50,7 +49,7 @@ void reset() {
 void connect() {
 //  String cmd = "AT+CWJAP=\"" +ssid+"\",\"" + ssidPass + "\"";
   const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
-  Serial.println(cmd);
+//  Serial.println(cmd);
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -62,9 +61,10 @@ void connect() {
 String getPostRequest() {
     String post = "POST ";
     post += "/api/logs";
-    post += " HTTP/1.0\r\n";
+    post += " HTTP/1.1\r\n";
     post += "Host: ";
     post += "http://192.168.8.100";
+    post += ":3000";
     post += "\r\n";
     post += "Accept: *";
     post += "/";
@@ -97,7 +97,7 @@ void httppost() {
 
     if (esp8266.find(">")) {
       Serial.println("Sending...");
-//      delay(2000);
+// x     delay(2000);
       esp8266.print(post); 
     }
 
@@ -106,12 +106,14 @@ void httppost() {
     }
 
     while(esp8266.available()) {
+      delay(1000);
       const String tmpResp = esp8266.readString();
-      Serial.println("SALA");
       Serial.println(tmpResp);
+      Serial.println("YOYO");
     }
 
     //close connection
+    delay(2000);
     esp8266.println("AT+CIPCLOSE");
   }
 }
