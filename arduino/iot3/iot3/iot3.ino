@@ -60,42 +60,21 @@ void connect() {
 }
 
 String getPostRequest() {
-//  char post[500];
-//    const char first[] = "POST";
-//    strcat(first, "/");
-//    strcat(first, "HTTP/1.0\r\n");
-//    const char second[] = "Host:";
-//    strcat(second, hostName);
-//    strcat(second, "\r\n");
-//    const char third[] = "Accept:*";
-//    strcat(third, "/*");
-//    strcat(third, "\r\n");
-//    const char fourth[] = "Content-Length:";
-//    strcat(fourth, 10);
-//    strcat(fourth, "\r\n");
-//    strcat(fourth, "Content-Type: application/x-www-form-urlencoded\r\n");
-//    strcat(fourth, "\r\n");
-//    strcat(fourth, "123");
-//    
-//    strcat(post, first);
-//    strcat(post, second);
-//    strcat(post, third);
-//    strcat(post, fourth);
-String post = "POST ";
-post += "/api/logs";
-post += " HTTP/1.0\r\n";
-post += "Host: ";
-post += "http://192.168.8.100";
-post += "\r\n";
-post += "Accept: *";
-post += "/";
-post += "*\r\n";
-post += "Content-Length: ";
-post += data.length();
-post += "\r\n";
-post += "Content-Type: application/x-www-form-urlencoded\r\n";
-post += "\r\n";
-post += data;
+    String post = "POST ";
+    post += "/api/logs";
+    post += " HTTP/1.0\r\n";
+    post += "Host: ";
+    post += "http://192.168.8.100";
+    post += "\r\n";
+    post += "Accept: *";
+    post += "/";
+    post += "*\r\n";
+    post += "Content-Length: ";
+    post += data.length();
+    post += "\r\n";
+    post += "Content-Type: application/x-www-form-urlencoded\r\n";
+    post += "\r\n";
+    post += data;
     return post;
 }
 
@@ -108,7 +87,7 @@ void httppost() {
     Serial.println("TCP Connection Ready.");
     delay(1000);
     String post = getPostRequest();
-    Serial.println(post); 
+//    Serial.println(post); 
 
     const char sendCmd[] = "AT+CIPSEND=";
     esp8266.print(sendCmd);
@@ -118,7 +97,7 @@ void httppost() {
 
     if (esp8266.find(">")) {
       Serial.println("Sending...");
-      delay(2000);
+//      delay(2000);
       esp8266.print(post); 
     }
 
