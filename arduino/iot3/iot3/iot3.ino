@@ -1,6 +1,9 @@
 
 #include "ESP8266.h"
 #include <SoftwareSerial.h>
+#include <ArduinoJson.h>
+
+static char respBuffer[4096];
 
 // global constant
 //const char ssid[] = "monkey";
@@ -8,10 +11,13 @@
 //const char hostName[] = "http://192.168.254.103";
 const char ssid[] = "HUAWEI-E5373-E4F9";
 const char ssidPass[] = "f1frd1ij";
-const char hostName[] = "http://192.168.8.100";
+const char hostName[] = "http://192.168.8.101";
+//const char ssid[] = "HiveNet";
+//const char ssidPass[] = "";
+//const char hostName[] = "192.168.137.244";
 const short hostPort = 3000;
 
-String data = "OMG";
+String data = "tae=123";
 
 // global var
 boolean isSetup = false;
@@ -47,9 +53,13 @@ void reset() {
 }
 
 void connect() {
-//  String cmd = "AT+CWJAP=\"" +ssid+"\",\"" + ssidPass + "\"";
+//  String cmd = "AT+CWJAP=\"";
+//  cmd += ssid;
+//  cmd += "\",\"";
+//  cmd += ssidPass;
+//  cmd += "\"";
   const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
-//  Serial.println(cmd);
+  Serial.println(cmd);
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -60,10 +70,10 @@ void connect() {
 
 String getPostRequest() {
     String post = "POST ";
-    post += "/api/logs";
+    post += "/post";
     post += " HTTP/1.1\r\n";
     post += "Host: ";
-    post += "http://192.168.8.100";
+    post += hostName;
     post += ":3000";
     post += "\r\n";
     post += "Accept: *";
@@ -80,7 +90,11 @@ String getPostRequest() {
 
 //void httppost(String uri, int dataLength, char[] data) {
 void httppost() {
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.101\",3000";
+//  String cmd = "AT+CIPSTART=\"TCP\",";
+//  cmd += hostName;
+//  cmd += ",";
+//  cmd += hostPort;
 //  Serial.println(cmd);
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
@@ -93,20 +107,19 @@ void httppost() {
     esp8266.print(sendCmd);
     esp8266.println(100);
 //    esp8266.println(post.length());
-    delay(500);
+//    delay(500);
 
     if (esp8266.find(">")) {
       Serial.println("Sending...");
 // x     delay(2000);
       esp8266.print(post); 
     }
-
     if (esp8266.find("SEND OK")) {
       Serial.print("Packet Sent.");
     }
 
     while(esp8266.available()) {
-      delay(1000);
+      delay(3000);
       const String tmpResp = esp8266.readString();
       Serial.println(tmpResp);
       Serial.println("YOYO");
