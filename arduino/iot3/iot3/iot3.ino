@@ -107,7 +107,8 @@ void send() {
     delay(500);
     printResponse();
 
-    String cmd = "GET /custom HTTP/1.1";
+//    String cmd = "GET /custom HTTP/1.1";
+    String cmd = getPostRequest();
     esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
     delay(1000);
 
