@@ -15,6 +15,8 @@ const char ssidPass[] = "f1frd1ij";
 const char hostName[] = "http://192.168.8.100";
 const short hostPort = 3000;
 
+unsigned long lastTimeMillis = 0;
+
 String data = "tae=123";
 
 // global var
@@ -40,7 +42,7 @@ void setup() {
 
 void loop() {
 
-  httppost();
+  send();
   delay(5000);
 }
 
@@ -91,43 +93,33 @@ void setupConfiguration() {
   printResponse();
 }
 
-void httppost() {
-  
-//    String post = getPostRequest();
-    String post = getGetRequest();
-//    Serial.println(post); 
+void send() {
+  if (millis() - lastTimeMillis > 10000) {
+    lastTimeMillis = millis();
 
-    const char sendCmd[] = "AT+CIPSEND=";
-    esp8266.print(sendCmd);
-    esp8266.print(100);
-    esp8266.print("\r\n");
-//    esp8266.println(post.length());
-//    delay(500);
-     printResponse();
-
-    if (esp8266.find(">")) {
-      Serial.println("Sending...");
-      esp8266.print(post); 
-    }
-    if (esp8266.find("SEND OK")) {
-      Serial.print("Packet Sent.");
-    }   
+    esp8266.println("AT+CIPMUX=1");
+    delay(500);
     printResponse();
-    if (esp8266.available()) {
-//      String message = esp8266.read();
-      Serial.write(esp8266.read());
-    }
 
-    while(esp8266.available()) {
-      delay(3000);
-      const String tmpResp = esp8266.readString();
-      Serial.println(tmpResp);
-      Serial.println("YOYO");
-    }
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+    //192.168.10.148 -> lab
+    //192.168.254.103 -> dianzel
+    delay(500);
+    printResponse();
 
-    //close connection
-    delay(2000);
-    esp8266.println("AT+CIPCLOSE");
+    String cmd = "GET /custom HTTP/1.1";
+    esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
+    delay(1000);
+
+    esp8266.println(cmd);
+    delay(500);
+    esp8266.println("");
+  }
+
+  if (esp8266.available()) {
+//    String message = esp8266.read();
+//    Serial.write(message);
+  }
 }
 
 
