@@ -1,9 +1,9 @@
-import { observeable, runInAction, action, computer } from 'mobx';
+import { observable, action } from 'mobx';
 
 class LogStore {
 
-    @observeable students = [];
-    @observeable logs = [];
+    @observable students = [];
+    @observable logs = [];
 
     constructor() {
 
@@ -15,3 +15,5 @@ class LogStore {
 
 
 }
+
+export default new LogStore();

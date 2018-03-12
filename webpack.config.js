@@ -29,20 +29,16 @@ module.exports = {
         }],
     }, {
       test: /\.scss$/,
-      use: [
-        {
-          loader: 'style-loader',
-        },
-        {
-          loader: 'css-loader',
-        },
-        {
-          loader: 'sass-loader',
-          options: {
-            includePaths: ['./node_modules'],
-          },
-        },
-      ],
+      loader: 'style-loader!css-loader!sass-loader?outputStyle=expanded&' +
+      'includePaths[]=' +
+      (encodeURIComponent(
+        path.resolve(process.cwd(), './node_modules')
+      )) +
+      '&includePaths[]=' +
+      (encodeURIComponent(
+          path.resolve( process.cwd(),
+            './node_modules/grommet/node_modules'))
+      )
     }
     ],
   },

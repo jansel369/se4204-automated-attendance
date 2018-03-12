@@ -18,6 +18,7 @@
     "babel": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.2",
+    "feathers-client": "^2.4.0",
     "feathers-mongodb": "^3.0.1",
     "grommet": "^1.10.1",
     "mobx": "^3.6.1",
