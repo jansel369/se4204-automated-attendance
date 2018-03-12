@@ -1,13 +1,16 @@
-import feathers from 'feathers';
-// import socketio from 'feathers-socketio';
-// import io from 'socket.io-client';
-// import hooks from 'feathers-hooks';
+import feathers from '@feathersjs/feathers';
+import feathersSocketio from '@feathersjs/socketio-client';
+import nativeSocketio from 'socket.io-client';
+import authClient from '@feathersjs/authentication-client';
 import customService from './services/custom';
-const client = feathers();
 
 const { location } = window;
 const protocol = location.host.startsWith('local') ? 'http' : 'https';
 const url = `${protocol}://${location.host}`;
+
+const socketConnection = nativeSocketio(url);
+const app = feathers();
+app.configure(feathersSocketio(socketConnection));
 
 
 // client.configure(customService());
@@ -15,6 +18,6 @@ const url = `${protocol}://${location.host}`;
 //   .configure(socketio(io(url)))
 //   .configure(hooks())
 
-// window.client = client;
+window.client = app;
 
-export default client;
+export default app;

@@ -7,17 +7,23 @@ import rest from '@feathersjs/express/rest';
 import socketio from '@feathersjs/socketio';
 import bodyParser from 'body-parser';
 import allServices from './services/';
+import channels from './channels';
 import morgan from 'morgan';
 
 const app = express(feathers());
 
 app
-    .configure(rest())
+    .configure(express.rest())
     .configure(socketio())
-    .use(bodyParser.json())
-    .use(bodyParser.urlencoded({ extended : true}))
+    // .use(bodyParser.json())
+    // .use(bodyParser.urlencoded({ extended : true}))
+    // .use(express.static(path.join(process.cwd(), 'public')))
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
     .use(express.static(path.join(process.cwd(), 'public')))
-    .use(morgan('dev'));
+    .use(morgan('dev'))
+    .on('connection', (connection) => app.channel('anonymous').join(connection))
+    .publish(() => app.channel('anonymous'));
 
 
 const server = async () => {

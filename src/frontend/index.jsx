@@ -32,4 +32,3 @@ ReactDOM.render(
   ,
   document.getElementById('mount-point'));
 
-window.app = client;
