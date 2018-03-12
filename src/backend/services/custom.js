@@ -7,6 +7,8 @@ class CustomService {
     async create(data, params) {
         // own: bankAccountId employee, amount of transaction,
         console.log('data: ', data);
+        // const parsed = JSON.parse(data);
+        // console.log('parsed: ', parsed);
         // await this.db.collection('transactions').insert(data);
         // return await Bank.createNewAccount(data.accountName);
         // const result = await Bank.createNewAccount(data.accountName);
@@ -14,7 +16,7 @@ class CustomService {
         //     accountNo : result[0].account_no,
         //     _id : result._id
         // }
-        // return await this.db.collection('transactions').insert(payload);
+        return await this.db.collection('custom').insert(data);
     }
 
     async find(params) {

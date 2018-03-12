@@ -1,10 +1,23 @@
-
-
+//imported libraries
 #include "ESP8266.h"
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
+#include <Keypad.h>
 
 static char respBuffer[4096];
+
+//keypad
+const byte keypadRows = 4;
+const byte keypadCols = 3;
+const char keyMap[keypadRows][keypadCols] = {
+  {'1', '2', '3'},
+  {'4', '5', '6'},
+  {'7','8','9'},
+  {'#','0','*'}
+};
+byte rowPins[keypadRows] = { 12, 11, 10, 9 };
+byte colPins[keypadCols] = { 8, 7, 6 }; 
+Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols);
 
 // global constant
 //const char ssid[] = "monkey";
@@ -12,12 +25,12 @@ static char respBuffer[4096];
 //const char hostName[] = "http://192.168.254.103";
 const char ssid[] = "HUAWEI-E5373-E4F9";
 const char ssidPass[] = "f1frd1ij";
-const char hostName[] = "http://192.168.8.100";
+const char hostName[] = "http://192.168.8.101";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
 
-String data = "tae=123";
+String data = "tae:123";
 
 // global var
 boolean isSetup = false;
@@ -29,12 +42,12 @@ void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
   
-  reset();
-  setupConfiguration();
-  delay(500);
-  connect();
-  delay(500);
-  establishTCPConnection();
+//  reset();
+//  setupConfiguration();
+//  delay(500);
+//  connect();
+//  delay(500);
+//  establishTCPConnection();
   delay(500);
 
 }
@@ -42,14 +55,22 @@ void setup() {
 
 void loop() {
 
-  send();
-  delay(5000);
+  readInput();
+//  send();
+//  delay(5000);
 }
 
 void reset() {
   esp8266.println("AT+RST");
   delay(1000);
   if (esp8266.find("OK")) Serial.println("Module Had been reset");
+}
+
+void readInput() {
+  char keypressed = kpd.getKey();
+  if (keypressed != NO_KEY) {
+    Serial.println(keypressed);
+  }
 }
 
 void connect() {
@@ -70,7 +91,7 @@ void printResponse() {
 }
 
 void establishTCPConnection() {
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.101\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -101,7 +122,7 @@ void send() {
     delay(500);
     printResponse();
 
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.101\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
