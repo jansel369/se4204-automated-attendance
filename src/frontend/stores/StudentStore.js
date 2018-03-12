@@ -96,6 +96,9 @@ class StudentStore {
         app.service('/api/logs').on('created', (newLog) => {
             console.log("NEW LOG: ", newLog);
             this.logs.push(newLog);
+            if (newLog.date === this.selectedDate) {
+                this.todaysLog.push(newLog);                
+            }
         });
     }
 

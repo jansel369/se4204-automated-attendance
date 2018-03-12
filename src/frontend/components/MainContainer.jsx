@@ -14,16 +14,18 @@ import Actions from 'grommet/components/icons/base/Apps';
 import Update from 'grommet/components/icons/base/Update';
 import Ascend from 'grommet/components/icons/base/Ascend';
 import Descend from 'grommet/components/icons/base/Descend';
+import Add from 'grommet/components/icons/base/Add';
 
 import LoginContainer from './Login';
 import LogTable from './LogTable';
+import RegisterContainer  from './Register';
 
 
-const MenuButton = (({label, path, Icon}) => (
+const MenuButton = (({label, path, Icon, onClick}) => (
     <Anchor
       icon={Icon}
       className="header-anchor"
-      path={path}>
+      onClick={() => onClick(path)}>
     <Label> {label} </Label>
     </Anchor>
 ));
@@ -44,7 +46,7 @@ const AppHeader = observer(() => (
 
 
 
-const AppContainer = observer(({StudentStore}) => (
+const AppContainer = observer(({StudentStore, StateStore}) => (
     <App>
         <AppHeader />
         <Box flex={true}
@@ -52,37 +54,48 @@ const AppContainer = observer(({StudentStore}) => (
             direction='row'
             responsive={true}>
 
-            <MenuButton label="Students" path="students" Icon={<Actions />} />
-            <MenuButton label="Attendance" path="attendance" Icon={<Update />} />
+            <MenuButton onClick={StateStore.setView} label="Students" path="students" Icon={<Actions />} />
+            <MenuButton onClick={StateStore.setView} label="Attendance" path="logtable" Icon={<Update />} />
+            <MenuButton onClick={StateStore.setView} label="Register Student" path="register" Icon={<Add />} />
 
         </Box>
         <Section>
-            <Box align="center"> 
-                <span>
-                <h3> {StudentStore.selectedDate} </h3>
-                <Anchor icon={<Ascend />} onClick={async () => await StudentStore.manipulateDate(true)} />
-                <Anchor icon={<Descend /> } onClick={async () => await StudentStore.manipulateDate(false)} />
-                </span>
-            </Box>
-            <LogTable />
+            {StateStore.view === "logtable" ?
+                <div>
+                    <Box align="center"> 
+                        <span>
+                        <h3> {StudentStore.selectedDate} </h3>
+                        <Anchor icon={<Ascend />} onClick={async () => await StudentStore.manipulateDate(true)} />
+                        <Anchor icon={<Descend /> } onClick={async () => await StudentStore.manipulateDate(false)} />
+                        </span>
+                    </Box>                    
+                    <LogTable /> 
+                </div>
+                :
+            StateStore.view === "register" ?
+                <RegisterContainer /> :
+            StateStore.view === "students" ? 
+                <h2> STUDENTS VIEW COMING SOON. </h2> :
+                null
+            }
         </Section>
     </App>
 ));
 
-@inject('StudentStore') 
+@inject('StudentStore', 'StateStore') 
 @observer
 class MainContainer extends React.Component {
   componentDidMount() {
-    const { StudentStore } = this.props;
+    const { StudentStore, StateStore } = this.props;
   }
 
   render() {
-    const { StudentStore } = this.props;
+    const { StudentStore, StateStore } = this.props;
       return (
           StudentStore.userHasLoggedIn ?
-          <AppContainer StudentStore={StudentStore} />
+          <AppContainer StudentStore={StudentStore} StateStore={StateStore} />
         //   : <LoginContainer />
-            : <AppContainer StudentStore={StudentStore} />
+            : <AppContainer StudentStore={StudentStore} StateStore={StateStore} />
       )
   }
 

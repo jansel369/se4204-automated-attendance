@@ -14,11 +14,15 @@ import LogTable from './components/LogTable';
 
 import StudentStore from './stores/StudentStore';
 import LogStore from './stores/LogStore';
+import StateStore from './stores/StateStore';
 
 const stores = {
   LogStore,
   StudentStore,
+  StateStore,
 }
+
+window.stores = stores;
 
 ReactDOM.render(
   <Provider {...stores}>
