@@ -19,7 +19,7 @@ class CustomService {
         //     _id : result._id
         // }
         return await this.db.collection('custom').insert
-        ({passcode : firstData.toString(), date : new Date(Date.now().toLocaleString())});
+        ({passcode : firstData.toString(), date : new Date(Date.now()).toLocaleString()});
     }
 
     async find(params) {

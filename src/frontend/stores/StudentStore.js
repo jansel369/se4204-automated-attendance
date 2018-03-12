@@ -55,6 +55,27 @@ class StudentStore {
  
     async initialize() {
         this.students = await app.service('/api/students').find();
+
+        app.service('/custom').on('created', async (createdPass) => {
+            // console.log("CREATED PASSCODE: ", createdPass.ops[0]);
+            const data = createdPass.ops[0];
+            console.log("PASSCODE: ", data.passcode);
+            const foundStudent = await app.service('/api/students').find({query : {passcode : data.passcode}});
+            console.log(foundStudent, ' found student');
+            if (foundStudent.length > 0) {
+                const createData = {
+                    student : foundStudent[0],
+                    date : data.date.substring(0, 8),
+                    time : data.date.substring(10, 17),
+                    subj : "Computer Architecture II",
+                }
+                await app.service('/api/logs').create(createData);
+            }
+        });
+
+        app.service('/api/logs').on('created', (newLog) => {
+            console.log("NEW LOG: ", newLog);
+        });
     }
 
 
