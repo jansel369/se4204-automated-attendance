@@ -10,6 +10,7 @@ import './scss/index.scss';
 import AppContainer from './components/MainContainer';
 import LoginContainer from './components/Login';
 import RegisterContainer from './components/Register';
+import LogTable from './components/LogTable';
 
 import StudentStore from './stores/StudentStore';
 import LogStore from './stores/LogStore';
@@ -26,6 +27,7 @@ ReactDOM.render(
         <Route exact path="/" component={AppContainer} />
         <Route path="/login" component={LoginContainer} />
         <Route path="/register" component={RegisterContainer} />
+        <Route path="/logtable" component={LogTable} />
       </div>
     </Router>
   </Provider>

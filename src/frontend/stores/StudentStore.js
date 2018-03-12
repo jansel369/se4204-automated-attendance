@@ -5,6 +5,9 @@ import { uuid, setProperty } from '../utils/';
 class StudentStore {
 
     @observable students = [];
+    @observable presentStudents = [];
+    @observable absentStudents = [];
+    @observable selectedDate = "2018-3-1";
     @observable logs = [];
     @observable newStudent = {
         idNumber : '',
@@ -55,13 +58,14 @@ class StudentStore {
  
     async initialize() {
         this.students = await app.service('/api/students').find();
+        this.logs = await app.service('/api/logs').find();
 
         app.service('/custom').on('created', async (createdPass) => {
             // console.log("CREATED PASSCODE: ", createdPass.ops[0]);
             const data = createdPass.ops[0];
             console.log("PASSCODE: ", data.passcode);
             const foundStudent = await app.service('/api/students').find({query : {passcode : data.passcode}});
-            console.log(foundStudent, ' found student');
+            // console.log(foundStudent, ' found student');
             if (foundStudent.length > 0) {
                 const createData = {
                     student : foundStudent[0],
@@ -75,6 +79,7 @@ class StudentStore {
 
         app.service('/api/logs').on('created', (newLog) => {
             console.log("NEW LOG: ", newLog);
+            this.logs.push(newLog);
         });
     }
 
