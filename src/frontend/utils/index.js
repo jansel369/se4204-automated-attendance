@@ -6,9 +6,9 @@ export function getDateNow() {
   
   export function uuid() {
     function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(1)
-        .substring(0);
+      return Math.random()
+        .toString()
+        .substring(2, 3);
     }
     return `${s4() + s4()}${s4()}${s4()}${
       s4()}${s4()}${s4()}${s4()}`;
