@@ -8,11 +8,13 @@ import Footer from 'grommet/components/Footer';
 import Title from 'grommet/components/Heading';
 import LoginIcon from 'grommet/components/icons/base/Login';
 
-// @inject('store')
+import { setProperty } from '../utils/';
+
+@inject('StudentStore')
 @observer
 class LoginContainer extends React.Component {
   render() {
-    // const { uiStore, authStore } = this.props;
+    const { StudentStore } = this.props;
     return (
       <Box align="center" id="contentFull">
         <br />
@@ -20,19 +22,19 @@ class LoginContainer extends React.Component {
         <form>
         <TextInput
           name="email"
-          placeHolder="username"
-          value={""}
+          placeHolder="Id Number"
+          value={StudentStore.loggedInUser.idNumber}
           onDOMChange={
-          (evt) => { console.log(evt.target.value); }
+          (evt) => { setProperty(StudentStore.loggedInUser, 'idNumber', evt.target.value); }
           }
         />
         <br />
         <PasswordInput
           name="password"
           placeholder="password"
-          value={""}
+          value={StudentStore.loggedInUser.password}
           onChange={
-          (evt) => { console.log(evt.target.value); }
+            (evt) => { setProperty(StudentStore.loggedInUser, 'password', evt.target.value); }
         }
         /><br />
         </form>
@@ -46,6 +48,7 @@ class LoginContainer extends React.Component {
                 type="submit"
                 primary={true}
                 onClick={() => {
+                    StudentStore.login();
                 //   store.authStore.authenticate(store.uiStore.getEmail(), store.uiStore.getPassword());
                 }}
               />
@@ -53,7 +56,7 @@ class LoginContainer extends React.Component {
           </Footer>
         </Box>
         <Box align="center">
-        <p id="error-handler"> ERRORS HERE </p>
+        <p id="error-handler"> {StudentStore.loggedInUser.passcode} </p>
       </Box>
       </Box>
     );

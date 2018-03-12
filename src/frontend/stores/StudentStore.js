@@ -12,6 +12,13 @@ class StudentStore {
         name : '',
         passcode : '',
     }
+    @observable loggedInUser = {
+        idNumber : '',
+        password : '',
+        name : '',
+        passcode : '',
+    }
+    @observable userHasLoggedIn = false;
 
     constructor() {
         this.initialize();
@@ -25,6 +32,16 @@ class StudentStore {
         this.generatePasscode();
         await app.service('/api/students').create(this.newStudent);
         this.resetData();
+    }
+
+    async login() {
+        const user = await app.service('/api/students').find(
+            {query : {idNumber : this.loggedInUser.idNumber, password : this.loggedInUser.password}});
+        console.log('user: ', user[0]);
+        if (user) {
+            this.loggedInUser = user[0];
+            this.userHasLoggedIn = true;
+        }
     }
 
     resetData() {
