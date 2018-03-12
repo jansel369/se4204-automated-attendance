@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import App from 'grommet/components/App';
 import Section from 'grommet/components/Section';
@@ -11,7 +11,7 @@ import Title from 'grommet/components/Title';
 import Menu from 'grommet/components/Menu';
 import Actions from 'grommet/components/icons/base/Apps';
 
-
+import LoginContainer from './Login';
 
 
 const AppHeader = observer(() => (
@@ -51,16 +51,19 @@ const AppContainer = observer(() => (
     </App>
 ));
 
-// @inject('store') 
+@inject('StudentStore') 
 @observer
 class MainContainer extends React.Component {
   componentDidMount() {
-    // const { store: { supplierStore, authStore, inventoryStore, transactionStore } } = this.props;
+    const { StudentStore } = this.props;
   }
 
   render() {
+    const { StudentStore } = this.props;
       return (
+          StudentStore.userHasLoggedIn ?
           <AppContainer />
+          : <LoginContainer />
       )
   }
 

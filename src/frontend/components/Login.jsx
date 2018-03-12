@@ -1,5 +1,6 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
+import { Link, Redirect } from 'react-router-dom';
 import PasswordInput from 'grommet/components/PasswordInput';
 import TextInput from 'grommet/components/TextInput';
 import Box from 'grommet/components/Box';
@@ -41,6 +42,7 @@ class LoginContainer extends React.Component {
         <Box align="center">
           <Footer pad={{ vertical: 'medium' }}>
             <div>
+            <Link to="/">
               <Button
                 id="indent"
                 icon={<LoginIcon id="icon" />}
@@ -52,6 +54,7 @@ class LoginContainer extends React.Component {
                 //   store.authStore.authenticate(store.uiStore.getEmail(), store.uiStore.getPassword());
                 }}
               />
+            </Link>
             </div>
           </Footer>
         </Box>
