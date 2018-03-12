@@ -34,6 +34,7 @@ String data = "tae:123";
 
 // global var
 boolean isSetup = false;
+String idNumber = "";
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
 ESP8266 wifi(esp8266);
@@ -69,7 +70,21 @@ void reset() {
 void readInput() {
   char keypressed = kpd.getKey();
   if (keypressed != NO_KEY) {
-    Serial.println(keypressed);
+    if (idNumber.length() <= 8) {
+      idNumber += String(keypressed);
+    }
+    else {
+//      Serial.println(idNumber[0]);
+      for (int x = 0; x < idNumber.length(); x++) {
+        if (x < 8) {
+          idNumber[x] = idNumber[x + 1];
+        }
+        if (x == 8) {
+          idNumber[x] = keypressed;
+        }
+      }
+    }
+    Serial.println(idNumber);
   }
 }
 
