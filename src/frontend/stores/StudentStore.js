@@ -9,6 +9,7 @@ class StudentStore {
     @observable absentStudents = [];
     @observable selectedDate = "2018-3-1";
     @observable logs = [];
+    @observable todaysLog = [];
     @observable newStudent = {
         idNumber : '',
         password : '',
@@ -55,10 +56,25 @@ class StudentStore {
             passcode : '',
         };
     }
+
+    async manipulateDate(ascend) {
+        const d = this.selectedDate.split('-')[2];
+        // const parsed = parseInt(d) + 1;
+        const parsed = (ascend) ? parseInt(d) + 1 : parseInt(d) - 1;
+        console.log(parsed, ' DAYS');
+        const parts = this.selectedDate.split('-');
+        this.selectedDate = parts[0] + "-" + parts[1] + "-" + parsed;
+        await this.retrieveTodaysLogs();
+    }
+
+    async retrieveTodaysLogs() {
+        this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
+    }
  
     async initialize() {
         this.students = await app.service('/api/students').find();
         this.logs = await app.service('/api/logs').find();
+        this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
 
         app.service('/custom').on('created', async (createdPass) => {
             // console.log("CREATED PASSCODE: ", createdPass.ops[0]);

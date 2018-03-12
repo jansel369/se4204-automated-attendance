@@ -12,8 +12,11 @@ import Menu from 'grommet/components/Menu';
 import Label from 'grommet/components/Label';
 import Actions from 'grommet/components/icons/base/Apps';
 import Update from 'grommet/components/icons/base/Update';
+import Ascend from 'grommet/components/icons/base/Ascend';
+import Descend from 'grommet/components/icons/base/Descend';
 
 import LoginContainer from './Login';
+import LogTable from './LogTable';
 
 
 const MenuButton = (({label, path, Icon}) => (
@@ -41,11 +44,10 @@ const AppHeader = observer(() => (
 
 
 
-const AppContainer = observer(() => (
+const AppContainer = observer(({StudentStore}) => (
     <App>
         <AppHeader />
-        <Section>
-            <Box flex={true}
+        <Box flex={true}
             justify='start'
             direction='row'
             responsive={true}>
@@ -53,7 +55,16 @@ const AppContainer = observer(() => (
             <MenuButton label="Students" path="students" Icon={<Actions />} />
             <MenuButton label="Attendance" path="attendance" Icon={<Update />} />
 
+        </Box>
+        <Section>
+            <Box align="center"> 
+                <span>
+                <h3> {StudentStore.selectedDate} </h3>
+                <Anchor icon={<Ascend />} onClick={async () => await StudentStore.manipulateDate(true)} />
+                <Anchor icon={<Descend /> } onClick={async () => await StudentStore.manipulateDate(false)} />
+                </span>
             </Box>
+            <LogTable />
         </Section>
     </App>
 ));
@@ -69,9 +80,9 @@ class MainContainer extends React.Component {
     const { StudentStore } = this.props;
       return (
           StudentStore.userHasLoggedIn ?
-          <AppContainer />
+          <AppContainer StudentStore={StudentStore} />
         //   : <LoginContainer />
-            : <AppContainer />
+            : <AppContainer StudentStore={StudentStore} />
       )
   }
 
