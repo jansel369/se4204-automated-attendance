@@ -1,133 +1,58 @@
 @import 'grommet/scss/hpinc/index.scss';
 
-body {
+  body {
+    margin: 0px;
+    padding: 0px;
     width: 100vw;
     height: 100vh;
-}
+  }
 
-a {
-    text-decoration: none;
-}
+  .register-field {
+    width : 300px;
+  }
 
-.secondary {
-    margin-left: 50px;
-}
-
-.form-input {
-    overflow-x: hidden;
-}
-
-.food-item-NA {
-    background-color: red
-}
-
-#title {
-    padding-top: 1em;
-    padding-left: 1em;
-    font-weight: 300;
-}
-
-#title-text {
-    font-weight: 300;
-}
-
-#icon {
-    padding: 1.5em;
-    width: 30vh;
-}
-
-#menu {
-    border-top: 2em;
-}
-
-#notif-menu {
-    margin: 0px;
-}
-
-#header {
-    position: fixed;
-    z-index: 5;
-    height: 30px;
-}
-
-#search-container {
-    margin-right: 2em;
-    padding-right: 4em;
-    padding-left: 4em;
-    z-index: 10;
-}
-
-#container {
-    padding-left: 1em;
-    padding-right: 1em;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-#content {
-    z-index: 0;
-    position: 15px;
-    height: 95vh;
-}
-
-#form-buttons {
-    padding-left: 1em;
-    padding-right: 1em;
-    margin: 2px;
-}
-
-#header-anchor {
-    margin-top: 10px;
-    right: 10px;
-    z-index: 5;
-}
-
-#table-container {
-    padding: 1em;
-}
-
-.table-cards {
-    background-color: rgba(#0d719b, 1);
-    font-size: 2em;
-    font-family: sans-serif;
-    color: #FFFFFF;
-    padding: 1em;
-    width: 30vh;
-    height: 10vh;
-}
-
-.taken {
-    background-color: rgba(#006996, 1);
-    font-size: 2em;
-    color: #DDDDDD;
-}
-
-.form-label {
-    text-transform: capitalize;
-}
-
-input {
-    max-width: 90%;
-}
-
-.list-done { 
-    text-decoration: line-through;
-}
-
-#Order-Card {
-    width : 500px;
-    height : auto;
-}
-
-.no-overflow {
+  #register-form {
+    width : 300px;
+    height: 300px;
+  }
+  
+  #menu {
+    color: white;
+  }
+  
+  #icon {
+    color: white;
+  }
+  
+  #navigator {
     overflow: hidden;
-}
-
-.order-note {
-    
-}
-
-.bordered {
-    border: 1px solid blue;
-    margin-left: 10px;
-}
+  }
+  
+  #label {
+    display: none;
+  }
+  
+  #login {
+    margin-right: 2em;
+  }
+  
+  #error-handler {
+    color: red;
+  }
+  
+  @media screen and (min-width: 480px) {
+    #menu {
+      color: white;
+      font-weight: 400;
+    }
+    #label {
+      font-weight: 400;
+      color: white !important;
+      display: inline;
+      text-decoration: none;
+      :hover {
+        background: white !important;
+        text-decoration: none;
+      }
+    }
+  }

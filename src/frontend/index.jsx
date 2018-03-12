@@ -4,27 +4,32 @@ import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import client from './client';
-import AppContainer from './components/MainContainer';
 import './scss/index.scss';
+
+
+import AppContainer from './components/MainContainer';
+import LoginContainer from './components/Login';
+import RegisterContainer from './components/Register';
+
+import StudentStore from './stores/StudentStore';
 import LogStore from './stores/LogStore';
 
-// const logStore = new LogStore();
-
-
-// const stores = {
-//   LogStore,
-// }
+const stores = {
+  LogStore,
+  StudentStore,
+}
 
 ReactDOM.render(
-  <Provider>
+  <Provider {...stores}>
     <Router>
-        <Route path="/" component={AppContainer} />
+      <div>
+        <Route exact path="/" component={AppContainer} />
+        <Route path="/login" component={LoginContainer} />
+        <Route path="/register" component={RegisterContainer} />
+      </div>
     </Router>
-    {/* <AppContainer /> */}
   </Provider>
   ,
   document.getElementById('mount-point'));
-
-  
 
 window.app = client;
