@@ -8,7 +8,6 @@ class CustomService {
         // own: bankAccountId employee, amount of transaction,
         console.log('data: ', data);
         const firstData = Object.getOwnPropertyNames(data)[0];
-        console.log(firstData, ' nu ka?')
         // firstData = firstData.split
         // const parsed = JSON.parse(data);
         // console.log('parsed: ', parsed);
@@ -19,7 +18,8 @@ class CustomService {
         //     accountNo : result[0].account_no,
         //     _id : result._id
         // }
-        return await this.db.collection('custom').insert({passcode : firstData.toString()});
+        return await this.db.collection('custom').insert
+        ({passcode : firstData.toString(), date : new Date(Date.now().toLocaleString())});
     }
 
     async find(params) {

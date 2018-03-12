@@ -9,10 +9,21 @@ import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 import Title from 'grommet/components/Title';
 import Menu from 'grommet/components/Menu';
+import Label from 'grommet/components/Label';
 import Actions from 'grommet/components/icons/base/Apps';
+import Update from 'grommet/components/icons/base/Update';
 
 import LoginContainer from './Login';
 
+
+const MenuButton = (({label, path, Icon}) => (
+    <Anchor
+      icon={Icon}
+      className="header-anchor"
+      path={path}>
+    <Label> {label} </Label>
+    </Anchor>
+));
 
 const AppHeader = observer(() => (
     <Header>
@@ -23,19 +34,7 @@ const AppHeader = observer(() => (
     justify='end'
     direction='row'
     responsive={false}>
-    <Menu icon={<Actions />}
-      dropAlign={{"right": "right"}}>
-      <Anchor href='#'
-        className='active'>
-        First
-      </Anchor>
-      <Anchor href='#'>
-        Second
-      </Anchor>
-      <Anchor href='#'>
-        Third
-      </Anchor>
-    </Menu>
+    
   </Box>
 </Header>
 ));
@@ -46,7 +45,15 @@ const AppContainer = observer(() => (
     <App>
         <AppHeader />
         <Section>
+            <Box flex={true}
+            justify='start'
+            direction='row'
+            responsive={true}>
 
+            <MenuButton label="Students" path="students" Icon={<Actions />} />
+            <MenuButton label="Attendance" path="attendance" Icon={<Update />} />
+
+            </Box>
         </Section>
     </App>
 ));
@@ -63,7 +70,8 @@ class MainContainer extends React.Component {
       return (
           StudentStore.userHasLoggedIn ?
           <AppContainer />
-          : <LoginContainer />
+        //   : <LoginContainer />
+            : <AppContainer />
       )
   }
 
