@@ -6,6 +6,16 @@
 
 static char respBuffer[4096];
 
+//test json
+//char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+//String json = "{sensor:\"gps\",time:1351824120,\"data\":[48.756080,2.302038]}";
+//String json = "{\"passcode\":";  
+
+//StaticJsonBuffer<200> jsonBuffer;
+
+//JsonObject& root = jsonBuffer.parseObject(json);
+
+
 //keypad
 const byte keypadRows = 4;
 const byte keypadCols = 3;
@@ -25,7 +35,7 @@ Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols
 //const char hostName[] = "http://192.168.254.103";
 const char ssid[] = "HUAWEI-E5373-E4F9";
 const char ssidPass[] = "f1frd1ij";
-const char hostName[] = "http://192.168.8.101";
+const char hostName[] = "http://192.168.8.100";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
@@ -43,12 +53,12 @@ void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
   
-//  reset();
-//  setupConfiguration();
-//  delay(500);
-//  connect();
-//  delay(500);
-//  establishTCPConnection();
+  reset();
+  setupConfiguration();
+  delay(500);
+  connect();
+  delay(500);
+  establishTCPConnection();
   delay(500);
 
 }
@@ -57,7 +67,11 @@ void setup() {
 void loop() {
 
   readInput();
-//  send();
+  if (idNumber.length() >= 8) {
+    send();
+    delay(2000);
+    idNumber = "";
+  }
 //  delay(5000);
 }
 
@@ -74,7 +88,6 @@ void readInput() {
       idNumber += String(keypressed);
     }
     else {
-//      Serial.println(idNumber[0]);
       for (int x = 0; x < idNumber.length(); x++) {
         if (x < 8) {
           idNumber[x] = idNumber[x + 1];
@@ -106,7 +119,7 @@ void printResponse() {
 }
 
 void establishTCPConnection() {
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.101\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -137,14 +150,14 @@ void send() {
     delay(500);
     printResponse();
 
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.101\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
     printResponse();
 
-//    String cmd = "GET /custom HTTP/1.1";
-    String cmd = getPostRequest();
+    String cmd = getPostRequest(idNumber);
+//      String cmd = getPostRequest(getJSON(idNumber));
     esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
     delay(1000);
 
@@ -157,6 +170,14 @@ void send() {
 //    String message = esp8266.read();
 //    Serial.write(message);
   }
+}
+
+String getJSON(String data) {
+  String json = "\"passcode\":";
+  json += "\"";
+  json += data;
+  json += "\"";
+  return json;
 }
 
 
@@ -176,7 +197,7 @@ String getGetRequest() {
   return req;
 }
 
-String getPostRequest() {
+String getPostRequest(String postData) {
     String post = "POST /";
     post += "custom";
     post += " HTTP/1.1\r\n";
@@ -187,11 +208,12 @@ String getPostRequest() {
     post += "/";
     post += "*\r\n";
     post += "Content-Length: ";
-    post += data.length();
+//    post += data.length();
+    post += postData.length();
     post += "\r\n";
     post += "Content-Type: application/x-www-form-urlencoded\r\n";
     post += "\r\n";
-    post += data;
+    post += postData;
     
     return post;
 }

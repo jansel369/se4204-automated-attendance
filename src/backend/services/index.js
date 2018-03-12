@@ -1,5 +1,5 @@
 import LoggerService from './Logger';
-import NotificationService from './Notification';
+import StudentService from './Student';
 import CustomService from './custom';
 
 
@@ -9,8 +9,8 @@ function setupAllServices(db) {
         const app = this;
         app
             .configure(new CustomService(db))
-        // .configure(LoggerService(db))
-        // .configure(NotificationService(db));
+            .configure(LoggerService(db))
+            .configure(StudentService(db));
     }
 }
 
