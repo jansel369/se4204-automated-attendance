@@ -30,8 +30,6 @@ ReactDOM.render(
       <div>
         <Route exact path="/" component={AppContainer} />
         <Route path="/login" component={LoginContainer} />
-        <Route path="/register" component={RegisterContainer} />
-        <Route path="/logtable" component={LogTable} />
       </div>
     </Router>
   </Provider>

@@ -7,7 +7,8 @@ class StudentStore {
     @observable students = [];
     @observable presentStudents = [];
     @observable absentStudents = [];
-    @observable selectedDate = "2018-3-1";
+    // @observable selectedDate = "2018-3-1";
+    @observable selectedDate = new Date(Date.now()).toLocaleDateString();
     @observable logs = [];
     @observable todaysLog = [];
     @observable newStudent = {
@@ -57,6 +58,13 @@ class StudentStore {
         };
     }
 
+    setTodayDate() {
+        const today = new Date(Date.now()).toLocaleDateString();
+        const split = today.split('/');
+        const newDate = split[2] + "-" + split[0] + "-" + split[1];
+        this.selectedDate = newDate;
+    }
+
     async manipulateDate(ascend) {
         const d = this.selectedDate.split('-')[2];
         // const parsed = parseInt(d) + 1;
@@ -72,9 +80,14 @@ class StudentStore {
     }
  
     async initialize() {
+        this.setTodayDate();
         this.students = await app.service('/api/students').find();
         this.logs = await app.service('/api/logs').find();
         this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
+
+        app.service('/api/students').on('created', (newStudent) => {
+            this.students.push(newStudent);
+        });
 
         app.service('/custom').on('created', async (createdPass) => {
             // console.log("CREATED PASSCODE: ", createdPass.ops[0]);
@@ -85,8 +98,8 @@ class StudentStore {
             if (foundStudent.length > 0) {
                 const createData = {
                     student : foundStudent[0],
-                    date : data.date.substring(0, 8),
-                    time : data.date.substring(10, 17),
+                    date : data.date.substring(0, 9),
+                    time : data.date.substring(10, 18),
                     subj : "Computer Architecture II",
                 }
                 await app.service('/api/logs').create(createData);

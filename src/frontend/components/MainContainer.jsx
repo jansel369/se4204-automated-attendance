@@ -10,14 +10,15 @@ import Box from 'grommet/components/Box';
 import Title from 'grommet/components/Title';
 import Menu from 'grommet/components/Menu';
 import Label from 'grommet/components/Label';
-import Actions from 'grommet/components/icons/base/Apps';
-import Update from 'grommet/components/icons/base/Update';
+import Actions from 'grommet/components/icons/base/Group';
+import Update from 'grommet/components/icons/base/Folder';
 import Ascend from 'grommet/components/icons/base/Ascend';
 import Descend from 'grommet/components/icons/base/Descend';
 import Add from 'grommet/components/icons/base/Add';
 
 import LoginContainer from './Login';
 import LogTable from './LogTable';
+import StudentTable from './StudentTable';
 import RegisterContainer  from './Register';
 
 
@@ -75,7 +76,7 @@ const AppContainer = observer(({StudentStore, StateStore}) => (
             StateStore.view === "register" ?
                 <RegisterContainer /> :
             StateStore.view === "students" ? 
-                <h2> STUDENTS VIEW COMING SOON. </h2> :
+                <StudentTable /> :
                 null
             }
         </Section>

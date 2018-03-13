@@ -3,23 +3,15 @@ class CustomService {
     constructor(db) {
         this.db = db;
     }
-    // return await this.db.collection('votes').insert(data);
     async create(data, params) {
-        // own: bankAccountId employee, amount of transaction,
-        console.log('data: ', data);
+        // console.log('data: ', data);
         const firstData = Object.getOwnPropertyNames(data)[0];
-        // firstData = firstData.split
-        // const parsed = JSON.parse(data);
-        // console.log('parsed: ', parsed);
-        // await this.db.collection('transactions').insert(data);
-        // return await Bank.createNewAccount(data.accountName);
-        // const result = await Bank.createNewAccount(data.accountName);
-        // const payload = {
-        //     accountNo : result[0].account_no,
-        //     _id : result._id
-        // }
+        let today = new Date(Date.now()).toLocaleString();
+        console.log('today : ', today);
         return await this.db.collection('custom').insert
-        ({passcode : firstData.toString(), date : new Date(Date.now()).toLocaleString()});
+        ({passcode : firstData.toString(), date : today});
+        // return await this.db.collection('custom').insert
+        // ({passcode : firstData.toString(), date : new Date(Date.now()).toLocaleString()});
     }
 
     async find(params) {
