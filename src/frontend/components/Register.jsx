@@ -54,10 +54,10 @@ class RegisterContainer extends React.Component {
         <TextInput
           name="register-field"
           className="register-field"
-          placeHolder="Passcode"
-          value={StudentStore.newStudent.passcode}
+          placeHolder="Email Address"
+          value={StudentStore.newStudent.email}
           onDOMChange={
-          (evt) => { console.log(evt.target.value); }
+            (evt) => { setProperty(StudentStore.newStudent, 'email', evt.target.value); }
           }
         />
         <br />
@@ -69,9 +69,8 @@ class RegisterContainer extends React.Component {
                 icon={<LoginIcon id="icon" />}
                 label="Register"
                 type="submit"
-                onClick={() => {
-                    StudentStore.register();
-                //   store.authStore.authenticate(store.uiStore.getEmail(), store.uiStore.getPassword());
+                onClick={async () => {
+                    await StudentStore.register();
                 }}
               />
             </div>

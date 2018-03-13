@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer';
+
 class CustomService {
 
     constructor(db) {
@@ -26,6 +28,30 @@ class CustomService {
     async patch(id, data, params) {
         // const {employer, employee, amount} = data;
         // return await Bank.initiatePayment(employer, employee, amount);
+        const { email, name, passcode } = data;
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'brentuniverysity@gmail.com',
+              pass: 'verystrongpassword'
+            }
+          });
+          
+          const mailOptions = {
+            from: 'brentuniverysity@gmail.com',
+            to: email,
+            subject: 'Brent University Student Passcode',
+            text: `Welcome to Brent University ${name}! Your generated passcode is ${passcode}`
+          };
+          
+          return await transporter.sendMail(mailOptions);
+        //   transporter.sendMail(mailOptions, function(error, info){
+        //     if (error) {
+        //       console.log(error);
+        //     } else {
+        //       console.log('Email sent: ' + info.response);
+        //     }
+        //   });
     }
 
     async update(id, data, params) {

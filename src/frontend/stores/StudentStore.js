@@ -17,12 +17,14 @@ class StudentStore {
         password : '',
         name : '',
         passcode : '',
+        email : '',
     }
     @observable loggedInUser = {
         idNumber : '',
         password : '',
         name : '',
         passcode : '',
+        email : '',
     }
     @observable userHasLoggedIn = false;
     @observable startTime = "2:30";
@@ -41,7 +43,10 @@ class StudentStore {
 
     async register() {
         this.generatePasscode();
+        const { email, name, passcode} = this.newStudent;
         await app.service('/api/students').create(this.newStudent);
+        await app.service('/custom').patch(null, {email, name, passcode});
+        // await this.sendEmail(email, name, passcode);
         this.resetData();
     }
 

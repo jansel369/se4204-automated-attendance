@@ -26,7 +26,9 @@ const MenuButton = (({label, path, Icon, onClick}) => (
     <Anchor
       icon={Icon}
       className="header-anchor"
-      onClick={() => onClick(path)}>
+      onClick={async () => {
+        onClick(path);
+      }}>
     <Label> {label} </Label>
     </Anchor>
 ));
@@ -66,8 +68,16 @@ const AppContainer = observer(({StudentStore, StateStore}) => (
                     <Box align="center"> 
                         <span>
                         <h3> {StudentStore.selectedDate} </h3>
-                        <Anchor icon={<Ascend />} onClick={async () => await StudentStore.manipulateDate(true)} />
-                        <Anchor icon={<Descend /> } onClick={async () => await StudentStore.manipulateDate(false)} />
+                        <Anchor icon={<Ascend />} onClick={async () => {
+                            await StudentStore.manipulateDate(true);
+                            await StudentStore.retrieveStudents();
+                            await StudentStore.retrieveStudents();
+                        }} />
+                        <Anchor icon={<Descend /> } onClick={async () => {
+                            await StudentStore.manipulateDate(false);
+                            await StudentStore.retrieveStudents();
+                            await StudentStore.retrieveStudents();
+                        }} />
                         </span>
                     </Box>                    
                     <LogTable subject='Computer Architecture II' timeStart={StudentStore.startTime} timeEnd={StudentStore.endTime} /> 
