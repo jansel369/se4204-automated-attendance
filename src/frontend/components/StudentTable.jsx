@@ -38,8 +38,8 @@ const StudentTable = inject('StudentStore')(observer(({StudentStore}) => (
 
         <tbody>
             {StudentStore.students.map(student => 
-            <TableItem id={student.idNumber} name={student.name}  email={"N/A"} 
-            passcode={student.passcode} attendance={0} absents={0} remarks={"In Danger Of Failing"} />)}
+            <TableItem id={student.idNumber} name={student.name}  email={"N/A"}  passcode={student.passcode} 
+            attendance={student.attendance} absents={student.absents} remarks={"In Danger Of Failing"} />)}
         </tbody>
     </Table>
     </div>

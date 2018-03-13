@@ -25,8 +25,8 @@ class StudentStore {
         passcode : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "10:00";
-    @observable endTime = "11:30";
+    @observable startTime = "2:30";
+    @observable endTime = "3:30";
 
     constructor() {
         this.initialize();
@@ -113,6 +113,7 @@ class StudentStore {
                 date : new Date(Date.now()).toLocaleString(),
                 time : "N/A",
                 subj : "Computer Architecture II",
+                passcode : absentee.passcode,
             }
             if (!this.absentStudents.includes(absentee.idNumber)) {
                 await app.service('/api/logs').create(createData);           
@@ -122,9 +123,22 @@ class StudentStore {
             this.absentStudents.push(absentee.idNumber);
         });
     }
+
+
+    async retrieveStudents() {
+        this.students = await app.service('/api/students').find();
+        this.students = await Promise.all(this.students.map(async (student) => {
+            let record = await app.service('/api/logs').find({query : {passcode : student.passcode}});
+            const presents = record.filter((rec) => rec.time !== "N/A");
+            const absent = record.filter((rec) => rec.time === "N/A");
+            return {...student, attendance : presents.length, absents : absent.length};
+        }));
+    }
     
  
     async initialize() {
+        await this.retrieveStudents();
+        console.log(this.students.slice());
         this.setTodayDate();
         this.students = await app.service('/api/students').find();
         this.logs = await app.service('/api/logs').find();
@@ -151,6 +165,7 @@ class StudentStore {
                     date : data.date.substring(0, 9),
                     time : data.date.substring(10, 18),
                     subj : "Computer Architecture II",
+                    passcode : foundStudent[0].passcode,
                 }
                 await app.service('/api/logs').create(createData);
             }

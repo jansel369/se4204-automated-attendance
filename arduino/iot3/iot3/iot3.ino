@@ -30,12 +30,12 @@ byte colPins[keypadCols] = { 8, 7, 6 };
 Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols);
 
 // global constant
-//const char ssid[] = "monkey";
-//const char ssidPass[] = "pass551010";
-//const char hostName[] = "http://192.168.254.103";
-const char ssid[] = "HUAWEI-E5373-E4F9";
-const char ssidPass[] = "f1frd1ij";
-const char hostName[] = "http://192.168.8.100";
+const char ssid[] = "monkey";
+const char ssidPass[] = "pass551010";
+const char hostName[] = "http://192.168.254.102";
+//const char ssid[] = "HUAWEI-E5373-E4F9";
+//const char ssidPass[] = "f1frd1ij";
+//const char hostName[] = "http://192.168.8.100";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
@@ -102,7 +102,8 @@ void readInput() {
 }
 
 void connect() {
-  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
+    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
+//  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -119,7 +120,8 @@ void printResponse() {
 }
 
 void establishTCPConnection() {
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+//  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -149,8 +151,8 @@ void send() {
     esp8266.println("AT+CIPMUX=1");
     delay(500);
     printResponse();
-
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
@@ -190,10 +192,6 @@ String getGetRequest() {
   req += ":";
   req += hostPort;
   req += "\r\n\r\n";
-  String sample =  "GET ";
-    sample += "/custom ";
-    sample += "HTTP/1.1\r\n";
-    sample += "Host: 192.168.8.100\r\n\r\n";
   return req;
 }
 
@@ -234,71 +232,4 @@ String getPostRequest(String postData) {
 
 
 
-//
-//
-//
-//void espSetup() {
-//  Serial.print("status: ");
-//  Serial.println(wifi.kick());
-//  delay(1000);
-//  Serial.print("restart: ");
-//  Serial.println(wifi.restart());
-//  delay(1000);
-//  
-//  Serial.print("FW version: ");
-//  Serial.println(wifi.getVersion());
-//  delay(1000);
-//  
-//  if (wifi.setOprToStation()) {
-//    Serial.print("to station ok\r\n");
-//  } else {
-//    Serial.print("to station err\r\n");
-//  }
-//
-//  if (wifi.joinAP(ssid, ssidPass)) {
-//    Serial.print("Join AP success\r\n");
-//    Serial.print("IP: ");
-//    delay(1000);
-//    Serial.println(wifi.getLocalIP());
-//  } else {
-//    Serial.print("Join AP failure\r\n");
-//  }
-//
-//  if (wifi.disableMUX()) {
-//    Serial.print("single ok\r\n");
-//  } else {
-//    Serial.print("single err\r\n");
-//  }
-//  delay(1000);
-//}
-//
-//void testConnection() {
-//      uint8_t buffer[1024] = {0};
-//
-//    if (wifi.createTCP(hostName, hostPort)) {
-//        Serial.print("create tcp ok\r\n");
-//    } else {
-//        Serial.print("Create tcp error\r\n");
-//    }
-//
-//    char *hello = "GET http://192.168.254.103:3000/api/logs HTTP/1.1";
-//    wifi.send((const uint8_t*)hello, strlen(hello));
-//
-//    uint32_t len = wifi.recv(buffer, sizeof(buffer), 10000);
-//    if (len > 0) {
-//        Serial.print("Received:[");
-//        for(uint32_t i = 0; i < len; i++) {
-//            Serial.print((char)buffer[i]);
-//        }
-//        Serial.print("]\r\n");
-//    }
-//
-//    if (wifi.releaseTCP()) {
-//        Serial.print("release tcp ok\r\n");
-//    } else {
-//        Serial.print("release tcp err\r\n");
-//    }
-//    
-//    while(1);
-//}
 
