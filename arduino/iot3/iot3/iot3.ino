@@ -1,19 +1,16 @@
 //imported libraries
-#include "ESP8266.h"
 #include <SoftwareSerial.h>
-#include <ArduinoJson.h>
 #include <Keypad.h>
+#include <LiquidCrystal_I2C.h>
 
 static char respBuffer[4096];
 
-//test json
-//char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
-//String json = "{sensor:\"gps\",time:1351824120,\"data\":[48.756080,2.302038]}";
-//String json = "{\"passcode\":";  
 
-//StaticJsonBuffer<200> jsonBuffer;
-
-//JsonObject& root = jsonBuffer.parseObject(json);
+//LCD
+LiquidCrystal_I2C lcd(0x27,16,2);
+char array1[]=" SunFounder               ";  //the string to print on the LCD
+char array2[]="hello, world!             ";  //the string to print on the LCD
+int tim = 500;
 
 
 //keypad
@@ -42,16 +39,18 @@ unsigned long lastTimeMillis = 0;
 
 String data = "tae:123";
 
+
 // global var
 boolean isSetup = false;
 String idNumber = "";
+boolean sending = false;
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
-ESP8266 wifi(esp8266);
 
 void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
+  setupLCD();
   
   reset();
   setupConfiguration();
@@ -67,7 +66,18 @@ void setup() {
 void loop() {
 
   readInput();
+  if (sending == false) {
+    lcdLoop();
+  }
+  else {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("    CHECKING...    ");
+    delay(3000);
+    sending = false;
+  }
   if (idNumber.length() >= 8) {
+    sending = true;
     send();
     delay(2000);
     idNumber = "";
@@ -81,9 +91,31 @@ void reset() {
   if (esp8266.find("OK")) Serial.println("Module Had been reset");
 }
 
+void setupLCD() {
+  lcd.init();  //initialize the lcd
+  lcd.backlight();  //open the backlight //
+}
+
+void closeLCD() {
+  lcd.clear();
+  lcd.noBacklight();
+}
+
+void lcdLoop() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+//  lcd.print("    RINGGING    ");
+  lcd.print(idNumber);
+  lcd.setCursor(0, 1);
+  lcd.print("    ID NUMBER    ");
+  delay(100);
+//  closeLCD();
+}
+
 void readInput() {
   char keypressed = kpd.getKey();
   if (keypressed != NO_KEY) {
+//    typing = true;
     if (idNumber.length() <= 8) {
       idNumber += String(keypressed);
     }

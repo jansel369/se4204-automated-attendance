@@ -7,7 +7,7 @@ import Anchor from 'grommet/components/Anchor';
 import Ascend from 'grommet/components/icons/base/Ascend';
 import Descend from 'grommet/components/icons/base/Descend';
 
-const TableItem = observer(({id, name, email, passcode, attendance, absents, remarks}) => (
+const TableItem = observer(({id, name, email, passcode, attendance, absents, remarks, fail}) => (
     <TableRow>
       <td> {id} </td>
       <td> {name} </td>
@@ -15,7 +15,7 @@ const TableItem = observer(({id, name, email, passcode, attendance, absents, rem
       <td> {passcode} </td>
       <td> {attendance} </td>
       <td> {absents} </td>
-      <td className='secondary'> {remarks} </td>
+      <td className={fail ? "red" : "green"}> {remarks} </td>
     </TableRow>
 ));
 
@@ -40,7 +40,9 @@ const StudentTable = inject('StudentStore')(observer(({StudentStore}) => (
             {StudentStore.students.map(student => 
             !isNaN(student.absents) ?
             <TableItem id={student.idNumber} name={student.name}  email={"N/A"}  passcode={student.passcode} 
-            attendance={student.attendance} absents={student.absents} remarks={(student.absents <= 6) ? "Passing" : "In Danger Of Failing"} /> : null
+            attendance={student.attendance} absents={student.absents} 
+            remarks={(student.absents <= 6) ? "Passing" : "In Danger Of Failing"}
+            fail={(student.absents <= 6) ? false : true} /> : null
             )}
         </tbody>
     </Table>

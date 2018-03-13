@@ -27,8 +27,8 @@ class StudentStore {
         email : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "2:30";
-    @observable endTime = "3:30";
+    @observable startTime = "9:30";
+    @observable endTime = "11:30";
 
     constructor() {
         this.initialize();
@@ -98,12 +98,10 @@ class StudentStore {
         const startMin = parseInt(this.startTime.split(":")[1]);
         const difference = currentMin - startMin;
         if (currentHr !== startHr) {
-            console.log("LATE KA ORAS NA MEG!");
             await this.logAbsentStudents();
         }
         else {
             if (difference >= 15) {
-                console.log("LATE KA SA MINUTES MEG!");
                 await this.logAbsentStudents();
             }
         }
@@ -154,6 +152,7 @@ class StudentStore {
         console.log("PRESENT STUDENTS: ", this.presentStudents.slice());
         this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
         await this.retrieveStudents();
+
         app.service('/api/students').on('created', (newStudent) => {
             this.students.push(newStudent);
         });

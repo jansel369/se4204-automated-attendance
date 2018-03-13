@@ -70,13 +70,9 @@ const AppContainer = observer(({StudentStore, StateStore}) => (
                         <h3> {StudentStore.selectedDate} </h3>
                         <Anchor icon={<Ascend />} onClick={async () => {
                             await StudentStore.manipulateDate(true);
-                            await StudentStore.retrieveStudents();
-                            await StudentStore.retrieveStudents();
                         }} />
                         <Anchor icon={<Descend /> } onClick={async () => {
                             await StudentStore.manipulateDate(false);
-                            await StudentStore.retrieveStudents();
-                            await StudentStore.retrieveStudents();
                         }} />
                         </span>
                     </Box>                    
