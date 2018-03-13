@@ -51,8 +51,8 @@ SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
 void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
-  setupLCD();
-  
+
+  setupLCD();  
   reset();
   setupConfiguration();
   delay(500);
@@ -65,30 +65,28 @@ void setup() {
 
 
 void loop() {
-
+ 
   readInput();
-  checkResponseValue();
-//  getData();
   if (sending == false) {
-    lcdLoop();
+//    lcdLoop();
   }
   else {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("    CHECKING...    ");
-    getData();
-    delay(3000);
+    delay(2000);
     sending = false;
   }
   if (idNumber.length() >= 8) {
     sending = true;
     send();
-    delay(2000);
+//    checkResponseValue();
+//    delay(1500);
     getData();
-    delay(3000);
+    checkResponseValue();
     idNumber = "";
   }
-//  delay(5000);
+
 }
 
 void reset() {
@@ -110,12 +108,11 @@ void closeLCD() {
 void lcdLoop() {
   lcd.clear();
   lcd.setCursor(0, 0);
-//  lcd.print("    RINGGING    ");
   lcd.print(idNumber);
   lcd.setCursor(0, 1);
 //  lcd.print("    ID NUMBER    ");
   lcd.print(response);
-  delay(100);
+  delay(20);
 //  closeLCD();
 }
 
@@ -165,22 +162,16 @@ void establishTCPConnection() {
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
     delay(1000);
-    printResponse();
   }
 }
 
 void setupConfiguration() {
   esp8266.println("AT+CWMODE=3");
   delay(500);
-  printResponse();
-
   esp8266.println("AT+CIPMUX=1");
   delay(500);
-  printResponse();
-
   esp8266.println("AT+CIPSERVER=1,80");
   delay(5000);
-  printResponse();
 }
 
 void send() {
@@ -189,67 +180,55 @@ void send() {
 
     esp8266.println("AT+CIPMUX=1");
     delay(500);
-    printResponse();
     esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
 //    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
-    printResponse();
-
     String cmd = getPostRequest(idNumber);
     esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
     delay(1000);
-
     esp8266.println(cmd);
     delay(500);
     esp8266.println("");
   }
 
-  if (esp8266.available()) {
-//    String message = esp8266.read();
-//    Serial.write(message);
-  }
 }
 
 void getData() {
   esp8266.println("AT+CIPMUX=1");
   delay(500);
-
+//
   esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-//  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+////  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
   delay(1000);
-  printResponse();
-
   String cmd = "GET /custom/5aa6a508f4ad6f09543c8a2b HTTP/1.1";
   esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
   delay(1000);
   esp8266.println(cmd);
   delay(500);
   esp8266.println("");
-  delay(500);
-  printResponse();
-
-  
+ 
 }
 
 void checkResponseValue() {
   
 if (esp8266.available() > 0) {
-    if (esp8266.find("\"msg\":\"SUCCESS\"")) {
-      Serial.println("YAY SUCESS!");
-      response = "SUCCESS";
-     }
+    Serial.print("PRINTING RESPONSE:");
+    printResponse();
 
-    if (esp8266.find("\"msg\":\"FAIL\"")) {
-      Serial.println("FAIL HAW!");
-      response = "FAIL";
+    if (esp8266.find("msg")) {
+      Serial.println("MSG FOUND!");
+      response = "MSG FOUND";
      }
-    if (esp8266.find("5aa6a508f4ad6f09543c8a2b")) {
+    if (esp8266.find("Express")) {
       Serial.println("ID YA!");
       response = "ID NUMBER YA";
      }
-    printResponse();
+    if (esp8266.find("SUCCESS")) {
+      Serial.println("YAY SUCESS!");
+      response = "SUCCESS";
+     }
     Serial.print("Reponse: ");
     Serial.print(response);
     Serial.println(""); 

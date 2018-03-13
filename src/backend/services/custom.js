@@ -30,8 +30,8 @@ class CustomService {
         // return {msg : "fromget"};
         // console.log("ANG ID: " , ObjectId(id));
         const results = await this.db.collection('custom').find().toArray();
-        const theOne = results.find(res => res._id.toString() === id);
-        // console.log(theOne, ' da right one!');
+        const theOne = await results.find(res => res._id.toString() === id);
+        console.log(theOne, ' da right one!');
         return theOne;
     }
 
@@ -66,7 +66,8 @@ class CustomService {
 
     async update(id, data, params) {
         const { name, msg } = data;
-        return await this.db.collection('custom').update({_id : ObjectId(id)}, {$set : {msg : data.msg, name : data.name}});
+        // return await this.db.collection('custom').update({_id : ObjectId(id)}, {$set : {msg : data.msg, name : data.name}});
+        return await this.db.collection('custom').update({_id : ObjectId(id)}, {msg : data.msg});
         // return {id, msg, name};
     }
 
