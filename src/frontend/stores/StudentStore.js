@@ -129,8 +129,8 @@ class StudentStore {
         this.students = await app.service('/api/students').find();
         this.students = await Promise.all(this.students.map(async (student) => {
             let record = await app.service('/api/logs').find({query : {passcode : student.passcode}});
-            const presents = record.filter((rec) => rec.time !== "N/A");
-            const absent = record.filter((rec) => rec.time === "N/A");
+            const presents = await record.filter((rec) => rec.time !== "N/A");
+            const absent = await record.filter((rec) => rec.time === "N/A");
             return {...student, attendance : presents.length, absents : absent.length};
         }));
     }
@@ -148,7 +148,7 @@ class StudentStore {
         this.presentStudents = this.students.filter((student) => this.presentNames.includes(student.idNumber));
         console.log("PRESENT STUDENTS: ", this.presentStudents.slice());
         this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
-
+        await this.retrieveStudents();
         app.service('/api/students').on('created', (newStudent) => {
             this.students.push(newStudent);
         });

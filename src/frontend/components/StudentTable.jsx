@@ -38,8 +38,10 @@ const StudentTable = inject('StudentStore')(observer(({StudentStore}) => (
 
         <tbody>
             {StudentStore.students.map(student => 
+            !isNaN(student.absents) ?
             <TableItem id={student.idNumber} name={student.name}  email={"N/A"}  passcode={student.passcode} 
-            attendance={student.attendance} absents={student.absents} remarks={"In Danger Of Failing"} />)}
+            attendance={student.attendance} absents={student.absents} remarks={(student.absents <= 6) ? "Passing" : "In Danger Of Failing"} /> : null
+            )}
         </tbody>
     </Table>
     </div>
