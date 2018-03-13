@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { ObjectId } from 'mongodb';
 
 class CustomService {
 
@@ -18,11 +19,20 @@ class CustomService {
 
     async find(params) {
         return await this.db.collection('custom').find().toArray();
-        // return "finding get?";
+        // console.log('finding');
+        // return {msg : "fromfind"};
+
     }
             //account number
     async get(id, params) {
         // return await Bank.requestAccountDetails(id);
+        // console.log('getting');
+        // return {msg : "fromget"};
+        // console.log("ANG ID: " , ObjectId(id));
+        const results = await this.db.collection('custom').find().toArray();
+        const theOne = results.find(res => res._id.toString() === id);
+        // console.log(theOne, ' da right one!');
+        return theOne;
     }
 
     async patch(id, data, params) {
@@ -55,7 +65,9 @@ class CustomService {
     }
 
     async update(id, data, params) {
-
+        const { name, msg } = data;
+        return await this.db.collection('custom').update({_id : ObjectId(id)}, {$set : {msg : data.msg, name : data.name}});
+        // return {id, msg, name};
     }
 
     async remove(id) {

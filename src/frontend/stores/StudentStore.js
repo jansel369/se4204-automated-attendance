@@ -27,8 +27,8 @@ class StudentStore {
         email : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "9:30";
-    @observable endTime = "11:30";
+    @observable startTime = "11:30";
+    @observable endTime = "1:30";
 
     constructor() {
         this.initialize();
@@ -172,6 +172,10 @@ class StudentStore {
                     passcode : foundStudent[0].passcode,
                 }
                 await app.service('/api/logs').create(createData);
+                app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : foundStudent[0].name, msg : "SUCCESS"});
+            }
+            else {
+                app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : "N/A", msg : "FAIL"});    
             }
         });
 

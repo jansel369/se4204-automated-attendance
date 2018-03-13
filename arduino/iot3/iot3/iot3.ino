@@ -27,12 +27,12 @@ byte colPins[keypadCols] = { 8, 7, 6 };
 Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols);
 
 // global constant
-const char ssid[] = "monkey";
-const char ssidPass[] = "pass551010";
-const char hostName[] = "http://192.168.254.102";
-//const char ssid[] = "HUAWEI-E5373-E4F9";
-//const char ssidPass[] = "f1frd1ij";
-//const char hostName[] = "http://192.168.8.100";
+//const char ssid[] = "monkey";
+//const char ssidPass[] = "pass551010";
+//const char hostName[] = "http://192.168.254.102";
+const char ssid[] = "HUAWEI-E5373-E4F9";
+const char ssidPass[] = "f1frd1ij";
+const char hostName[] = "http://192.168.8.100";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
@@ -43,6 +43,7 @@ String data = "tae:123";
 // global var
 boolean isSetup = false;
 String idNumber = "";
+String response = "";
 boolean sending = false;
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
@@ -66,6 +67,8 @@ void setup() {
 void loop() {
 
   readInput();
+  checkResponseValue();
+//  getData();
   if (sending == false) {
     lcdLoop();
   }
@@ -73,6 +76,7 @@ void loop() {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("    CHECKING...    ");
+    getData();
     delay(3000);
     sending = false;
   }
@@ -80,6 +84,8 @@ void loop() {
     sending = true;
     send();
     delay(2000);
+    getData();
+    delay(3000);
     idNumber = "";
   }
 //  delay(5000);
@@ -107,7 +113,8 @@ void lcdLoop() {
 //  lcd.print("    RINGGING    ");
   lcd.print(idNumber);
   lcd.setCursor(0, 1);
-  lcd.print("    ID NUMBER    ");
+//  lcd.print("    ID NUMBER    ");
+  lcd.print(response);
   delay(100);
 //  closeLCD();
 }
@@ -134,8 +141,8 @@ void readInput() {
 }
 
 void connect() {
-    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
-//  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
+//    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
+  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -152,8 +159,8 @@ void printResponse() {
 }
 
 void establishTCPConnection() {
-//  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+//  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -183,15 +190,14 @@ void send() {
     esp8266.println("AT+CIPMUX=1");
     delay(500);
     printResponse();
-//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
     printResponse();
 
     String cmd = getPostRequest(idNumber);
-//      String cmd = getPostRequest(getJSON(idNumber));
     esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
     delay(1000);
 
@@ -206,6 +212,52 @@ void send() {
   }
 }
 
+void getData() {
+  esp8266.println("AT+CIPMUX=1");
+  delay(500);
+
+  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+//  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+  delay(1000);
+  printResponse();
+
+  String cmd = "GET /custom/5aa6a508f4ad6f09543c8a2b HTTP/1.1";
+  esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));
+  delay(1000);
+  esp8266.println(cmd);
+  delay(500);
+  esp8266.println("");
+  delay(500);
+  printResponse();
+
+  
+}
+
+void checkResponseValue() {
+  
+if (esp8266.available() > 0) {
+    if (esp8266.find("\"msg\":\"SUCCESS\"")) {
+      Serial.println("YAY SUCESS!");
+      response = "SUCCESS";
+     }
+
+    if (esp8266.find("\"msg\":\"FAIL\"")) {
+      Serial.println("FAIL HAW!");
+      response = "FAIL";
+     }
+    if (esp8266.find("5aa6a508f4ad6f09543c8a2b")) {
+      Serial.println("ID YA!");
+      response = "ID NUMBER YA";
+     }
+    printResponse();
+    Serial.print("Reponse: ");
+    Serial.print(response);
+    Serial.println(""); 
+  } 
+}
+
+
+
 String getJSON(String data) {
   String json = "\"passcode\":";
   json += "\"";
@@ -217,13 +269,9 @@ String getJSON(String data) {
 
 String getGetRequest() {
   String req = "GET /";
-  req += "api/logs?apples=56";
+//  req += "/custom/?d";
+  req += "/custom/5aa6a508f4ad6f09543c8a2b";
   req += " HTTP/1.1\r\n";
-  req += "Host: ";
-  req += hostName;
-  req += ":";
-  req += hostPort;
-  req += "\r\n\r\n";
   return req;
 }
 
