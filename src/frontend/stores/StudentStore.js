@@ -7,6 +7,7 @@ class StudentStore {
     @observable students = [];
     @observable presentStudents = [];
     @observable absentStudents = [];
+    @observable presentNames = [];
     // @observable selectedDate = "2018-3-1";
     @observable selectedDate = new Date(Date.now()).toLocaleDateString();
     @observable logs = [];
@@ -24,9 +25,14 @@ class StudentStore {
         passcode : '',
     }
     @observable userHasLoggedIn = false;
+    @observable startTime = "10:00";
+    @observable endTime = "11:30";
 
     constructor() {
         this.initialize();
+        setInterval(async () => {
+            await this.checktime();
+        }, 5000);
     }
 
     generatePasscode() {
@@ -78,11 +84,55 @@ class StudentStore {
     async retrieveTodaysLogs() {
         this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
     }
+
+    async checktime() {
+        const currentTime = new Date(Date.now()).toLocaleTimeString();
+        const currentHr = currentTime.split(":")[0];
+        const currentMin = parseInt(currentTime.split(":")[1]);
+        const startHr = this.startTime.split(":")[0];
+        const startMin = parseInt(this.startTime.split(":")[1]);
+        const difference = currentMin - startMin;
+        if (currentHr !== startHr) {
+            console.log("LATE KA ORAS NA MEG!");
+            await this.logAbsentStudents();
+        }
+        else {
+            if (difference >= 15) {
+                console.log("LATE KA SA MINUTES MEG!");
+                await this.logAbsentStudents();
+            }
+        }
+    }
+
+    async logAbsentStudents() {
+        const absenots = this.students.filter(student => !this.presentNames.includes(student.idNumber));
+        console.log("MGA DUNGOL: ", absenots);
+        absenots.forEach(async (absentee) => {
+            const createData = {
+                student : absentee,
+                date : new Date(Date.now()).toLocaleString(),
+                time : "N/A",
+                subj : "Computer Architecture II",
+            }
+            if (!this.absentStudents.includes(absentee.idNumber)) {
+                await app.service('/api/logs').create(createData);           
+                this.logs.push(createData); 
+                this.todaysLog.push(createData);
+            }
+            this.absentStudents.push(absentee.idNumber);
+        });
+    }
+    
  
     async initialize() {
         this.setTodayDate();
         this.students = await app.service('/api/students').find();
         this.logs = await app.service('/api/logs').find();
+        this.presentNames = this.logs.filter((log) => log.time !== "N/A");
+        this.presentNames = this.presentNames.map((log) => log.student.idNumber);
+        console.log(this.presentNames.slice(), ' PRESENT NAMES');
+        this.presentStudents = this.students.filter((student) => this.presentNames.includes(student.idNumber));
+        console.log("PRESENT STUDENTS: ", this.presentStudents.slice());
         this.todaysLog = await app.service('/api/logs').find({query : {date : this.selectedDate}});
 
         app.service('/api/students').on('created', (newStudent) => {
@@ -107,10 +157,13 @@ class StudentStore {
         });
 
         app.service('/api/logs').on('created', (newLog) => {
-            console.log("NEW LOG: ", newLog);
+            // console.log("NEW LOG: ", newLog);
             this.logs.push(newLog);
             if (newLog.date === this.selectedDate) {
                 this.todaysLog.push(newLog);                
+            }
+            if (newLog.time !== "N/A" && !this.presentStudents.includes(newLog.student.idNumber)) {
+                this.presentStudents.push(newLog.student.idNumber);            
             }
         });
     }

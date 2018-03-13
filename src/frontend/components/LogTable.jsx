@@ -6,6 +6,7 @@ import TableRow from 'grommet/components/TableRow';
 import Anchor from 'grommet/components/Anchor';
 import Ascend from 'grommet/components/icons/base/Ascend';
 import Descend from 'grommet/components/icons/base/Descend';
+import Box from 'grommet/components/Box';
 
 const TableItem = observer(({id, name, timeIn, timeOut, remarks}) => (
     <TableRow>
@@ -18,9 +19,13 @@ const TableItem = observer(({id, name, timeIn, timeOut, remarks}) => (
 ));
 
 
-const LogTable = inject('StudentStore')(observer(({StudentStore}) => (
+const LogTable = inject('StudentStore')(observer(({StudentStore, subject, timeStart, timeEnd}) => (
     <div>
-    {/* <h2> {StudentStore.selectedDate} </h2> <br />     */}
+        <Box justify="start" direction="row">
+            <h3 className="header-anchor"> Subject: {subject} </h3> 
+            <h3 className="header-anchor"> Starts: {timeStart} </h3> 
+            <h3 className="header-anchor"> Ends: {timeEnd} </h3> 
+        </Box>
     <Table>
         <thead>
         <tr>
@@ -35,7 +40,7 @@ const LogTable = inject('StudentStore')(observer(({StudentStore}) => (
         <tbody>
             {StudentStore.todaysLog.map(log => 
             <TableItem id={log.student.idNumber} name={log.student.name} 
-             timeIn={log.time} timeOut={"N/A"} remarks={"PRESENT"} />)}
+             timeIn={log.time} timeOut={"N/A"} remarks={(log.time !== "N/A") ? "PRESENT" : "ABSENT"} />)}
         </tbody>
     </Table>
     </div>

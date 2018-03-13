@@ -70,7 +70,7 @@ const AppContainer = observer(({StudentStore, StateStore}) => (
                         <Anchor icon={<Descend /> } onClick={async () => await StudentStore.manipulateDate(false)} />
                         </span>
                     </Box>                    
-                    <LogTable /> 
+                    <LogTable subject='Computer Architecture II' timeStart='10:00' timeEnd='11:30' /> 
                 </div>
                 :
             StateStore.view === "register" ?
