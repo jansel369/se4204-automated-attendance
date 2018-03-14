@@ -54,7 +54,7 @@ class CustomService {
             subject: 'Brent University Student Passcode',
             text: `Welcome to Brent University ${name}! Your generated passcode is ${passcode}`
           };
-          
+        //   console.log('HOLY SHIT ', data);
           return await transporter.sendMail(mailOptions);
         //   transporter.sendMail(mailOptions, function(error, info){
         //     if (error) {

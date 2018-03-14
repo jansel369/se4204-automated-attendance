@@ -2,6 +2,7 @@
 #include <SoftwareSerial.h>
 #include <Keypad.h>
 #include <LiquidCrystal_I2C.h>
+#include <Servo.h>
 
 static char respBuffer[4096];
 
@@ -9,7 +10,9 @@ static char respBuffer[4096];
 //LCD
 LiquidCrystal_I2C lcd(0x27,16,2);
 
-
+//Servo
+Servo servo;
+const byte servoPin = A0;
 
 //keypad
 const byte keypadRows = 4;
@@ -28,9 +31,12 @@ Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols
 //const char ssid[] = "monkey";
 //const char ssidPass[] = "pass551010";
 //const char hostName[] = "http://192.168.254.102";
-const char ssid[] = "HUAWEI-E5373-E4F9";
-const char ssidPass[] = "f1frd1ij";
-const char hostName[] = "http://192.168.8.100";
+//const char ssid[] = "HUAWEI-E5373-E4F9";
+//const char ssidPass[] = "f1frd1ij";
+//const char hostName[] = "http://192.168.8.100";
+const char ssid[] = "Software_Dept";
+const char ssidPass[] = "SoftEng_Dept";
+const char hostName[] = "http://192.168.10.146";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
@@ -43,7 +49,10 @@ boolean isSetup = false;
 String idNumber = "";
 String response = "";
 boolean sending = false;
-boolean opened = true;
+boolean opened = false;
+char temp[200];
+//int servoRotation = 50;
+//boolean servoOpen = false;
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
 
@@ -51,6 +60,7 @@ void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
 
+  servo.attach(servoPin);
   setupLCD();  
   reset();
   setupConfiguration();
@@ -80,8 +90,11 @@ void loop() {
     sending = true;
     send();
     getData();
+    openServo();
     checkResponseValue();
     idNumber = "";
+    delay(1000);
+    closeServo();
   }
 
 }
@@ -97,6 +110,14 @@ void setupLCD() {
   lcd.backlight();  //open the backlight //
 }
 
+void openServo() {
+  servo.write(50);
+}
+
+void closeServo() {
+  servo.write(0);
+}
+
 void closeLCD() {
   lcd.clear();
   lcd.noBacklight();
@@ -109,8 +130,7 @@ void lcdLoop() {
   lcd.setCursor(0, 1);
   lcd.print("    ID NUMBER    ");
 //  lcd.print(response);
-  delay(30);
-//  closeLCD();
+  delay(50);
 }
 
 void readInput() {
@@ -136,7 +156,8 @@ void readInput() {
 
 void connect() {
 //    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
-  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
+//  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
+  const char cmd[] = "AT+CWJAP=\"Software_Dept\",\"SoftEng_Dept\"";
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -148,7 +169,7 @@ void connect() {
 
 void printResponse() {
   while (esp8266.available()) {
-    Serial.println(esp8266.readStringUntil('\n'));
+    Serial.println(esp8266.readStringUntil('\r'));
   }
 }
 
@@ -177,7 +198,8 @@ void send() {
 
     esp8266.println("AT+CIPMUX=1");
     delay(500);
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
+//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
 //    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
@@ -196,7 +218,8 @@ void getData() {
   esp8266.println("AT+CIPMUX=1");
   delay(500);
 //
-  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
+  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
+//  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
 ////  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
   delay(1000);
   String cmd = "GET /custom/5aa6a508f4ad6f09543c8a2b HTTP/1.1";
@@ -211,7 +234,7 @@ void getData() {
 void checkResponseValue() {
   
   if (esp8266.available() > 0) {
-    
+
     Serial.print("PRINTING RESPONSE:");
     printResponse();
 

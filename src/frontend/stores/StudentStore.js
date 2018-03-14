@@ -27,8 +27,8 @@ class StudentStore {
         email : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "11:30";
-    @observable endTime = "1:30";
+    @observable startTime = "2:30";
+    @observable endTime = "5:30";
 
     constructor() {
         this.initialize();
