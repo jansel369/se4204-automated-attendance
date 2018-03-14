@@ -1,0 +1,70 @@
+@import 'grommet/scss/hpinc/index.scss';
+
+  body {
+    margin: 0px;
+    padding: 0px;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .register-field {
+    width : 300px;
+  }
+
+  .green {
+    color : green;
+  }
+  
+  .red {
+    color : red;
+  }
+
+  .header-anchor {
+    margin-right: 15px;
+  }
+
+  #register-form {
+    width : 300px;
+    height: 300px;
+  }
+  
+  #menu {
+    color: white;
+  }
+  
+  #icon {
+    color: white;
+  }
+  
+  #navigator {
+    overflow: hidden;
+  }
+  
+  #label {
+    display: none;
+  }
+  
+  #login {
+    margin-right: 2em;
+  }
+  
+  #error-handler {
+    color: red;
+  }
+  
+  @media screen and (min-width: 480px) {
+    #menu {
+      color: white;
+      font-weight: 400;
+    }
+    #label {
+      font-weight: 400;
+      color: white !important;
+      display: inline;
+      text-decoration: none;
+      :hover {
+        background: white !important;
+        text-decoration: none;
+      }
+    }
+  }
