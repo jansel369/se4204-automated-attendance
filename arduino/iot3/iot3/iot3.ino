@@ -8,9 +8,7 @@ static char respBuffer[4096];
 
 //LCD
 LiquidCrystal_I2C lcd(0x27,16,2);
-char array1[]=" SunFounder               ";  //the string to print on the LCD
-char array2[]="hello, world!             ";  //the string to print on the LCD
-int tim = 500;
+
 
 
 //keypad
@@ -45,6 +43,7 @@ boolean isSetup = false;
 String idNumber = "";
 String response = "";
 boolean sending = false;
+boolean opened = true;
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
 
@@ -68,7 +67,7 @@ void loop() {
  
   readInput();
   if (sending == false) {
-//    lcdLoop();
+    lcdLoop();
   }
   else {
     lcd.clear();
@@ -80,8 +79,6 @@ void loop() {
   if (idNumber.length() >= 8) {
     sending = true;
     send();
-//    checkResponseValue();
-//    delay(1500);
     getData();
     checkResponseValue();
     idNumber = "";
@@ -110,9 +107,9 @@ void lcdLoop() {
   lcd.setCursor(0, 0);
   lcd.print(idNumber);
   lcd.setCursor(0, 1);
-//  lcd.print("    ID NUMBER    ");
-  lcd.print(response);
-  delay(20);
+  lcd.print("    ID NUMBER    ");
+//  lcd.print(response);
+  delay(30);
 //  closeLCD();
 }
 
@@ -213,22 +210,35 @@ void getData() {
 
 void checkResponseValue() {
   
-if (esp8266.available() > 0) {
+  if (esp8266.available() > 0) {
+    
     Serial.print("PRINTING RESPONSE:");
     printResponse();
 
-    if (esp8266.find("msg")) {
-      Serial.println("MSG FOUND!");
-      response = "MSG FOUND";
-     }
-    if (esp8266.find("Express")) {
-      Serial.println("ID YA!");
-      response = "ID NUMBER YA";
-     }
-    if (esp8266.find("SUCCESS")) {
-      Serial.println("YAY SUCESS!");
-      response = "SUCCESS";
-     }
+//    if (esp8266.find("Express")) {
+//      Serial.println("ID YA!");
+//      response = "ID NUMBER YA";
+//      opened = true;
+//      }
+
+
+    if (opened == false) {
+      Serial.println("DIRI KO"); 
+      delay(1000);
+      if (esp8266.find("SUCCESS")) {
+        Serial.println("SUCCESS!!");
+        response = "SUCCESS";
+        opened = true;
+      }
+    }
+    else {
+      delay(1000);
+      if (esp8266.find("FAIL")) {
+      Serial.println("FAIL HAW !");
+      response = "FAIL";
+      opened = false;
+      }
+    }
     Serial.print("Reponse: ");
     Serial.print(response);
     Serial.println(""); 

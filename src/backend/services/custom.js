@@ -31,8 +31,9 @@ class CustomService {
         // console.log("ANG ID: " , ObjectId(id));
         const results = await this.db.collection('custom').find().toArray();
         const theOne = await results.find(res => res._id.toString() === id);
-        console.log(theOne, ' da right one!');
-        return theOne;
+        const msg = theOne.msg;
+        console.log(msg, ' da right one!');
+        return msg;
     }
 
     async patch(id, data, params) {
