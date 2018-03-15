@@ -66,9 +66,28 @@ class CustomService {
     }
 
     async update(id, data, params) {
-        const { name, msg } = data;
+        const { email, name, fail } = data;
+        console.log("UDPATE DATA: ", data);
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'brentuniverysity@gmail.com',
+              pass: 'verystrongpassword'
+            }
+          });
+          
+          const mailOptions = {
+            from: 'brentuniverysity@gmail.com',
+            to: email,
+            subject: 'Brent University Parental Update',
+            text: (fail) ?
+            `Greetings Mr/Ms. ${name.split(" ")[2]}! Your son/daughter ${name.split(" ")[0]} ${name.split(" ")[1]} is in danger of dropping the subject due to many absences. Have a good day.`
+            : `Greetings Mr/Ms. ${name.split(" ")[2]}! Your son/daughter ${name.split(" ")[0]} ${name.split(" ")[1]} is regularly attending his/her classes. You should be proud. Have a good day.`
+          };
+        //   console.log('HOLY SHIT ', data);
+          return await transporter.sendMail(mailOptions);
         // return await this.db.collection('custom').update({_id : ObjectId(id)}, {$set : {msg : data.msg, name : data.name}});
-        return await this.db.collection('custom').update({_id : ObjectId(id)}, {msg : data.msg});
+        // return await this.db.collection('custom').update({_id : ObjectId(id)}, {msg : data.msg});
         // return {id, msg, name};
     }
 

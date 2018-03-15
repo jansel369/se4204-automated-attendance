@@ -28,15 +28,15 @@ byte colPins[keypadCols] = { 8, 7, 6 };
 Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols);
 
 // global constant
-//const char ssid[] = "monkey";
-//const char ssidPass[] = "pass551010";
-//const char hostName[] = "http://192.168.254.102";
+const char ssid[] = "monkey";
+const char ssidPass[] = "pass551010";
+const char hostName[] = "http://192.168.254.102";
 //const char ssid[] = "HUAWEI-E5373-E4F9";
 //const char ssidPass[] = "f1frd1ij";
 //const char hostName[] = "http://192.168.8.100";
-const char ssid[] = "Software_Dept";
-const char ssidPass[] = "SoftEng_Dept";
-const char hostName[] = "http://192.168.10.146";
+//const char ssid[] = "Software_Dept";
+//const char ssidPass[] = "SoftEng_Dept";
+//const char hostName[] = "http://192.168.10.146";
 const short hostPort = 3000;
 
 unsigned long lastTimeMillis = 0;
@@ -52,7 +52,7 @@ boolean sending = false;
 boolean opened = false;
 char temp[200];
 //int servoRotation = 50;
-//boolean servoOpen = false;
+boolean servoOpen = false;
 
 SoftwareSerial esp8266(2, 3); /* RX:D3, TX:D2 */
 
@@ -61,6 +61,7 @@ void setup() {
   Serial.begin(115200);
 
   servo.attach(servoPin);
+//  servo.write(0);
   setupLCD();  
   reset();
   setupConfiguration();
@@ -90,12 +91,20 @@ void loop() {
     sending = true;
     send();
     getData();
-    openServo();
+//    openServo();
+    closeServo();
+    servoOpen = true;
     checkResponseValue();
     idNumber = "";
     delay(1000);
-    closeServo();
+    openServo();
   }
+//  if (servoOpen == true) {
+//    closeServo();
+////    openServo();
+//    servoOpen = false;
+//    Serial.println("YOT YOT YOT");
+//  }
 
 }
 
@@ -111,11 +120,13 @@ void setupLCD() {
 }
 
 void openServo() {
-  servo.write(50);
+//  servo.write(50);
+  servo.write(0);
 }
 
 void closeServo() {
-  servo.write(0);
+//  servo.write(0);
+  servo.write(60);
 }
 
 void closeLCD() {
@@ -155,9 +166,9 @@ void readInput() {
 }
 
 void connect() {
-//    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
+    const char cmd[] = "AT+CWJAP=\"monkey\",\"pass551010\"";
 //  const char cmd[] = "AT+CWJAP=\"HUAWEI-E5373-E4F9\",\"f1frd1ij\"";
-  const char cmd[] = "AT+CWJAP=\"Software_Dept\",\"SoftEng_Dept\"";
+//  const char cmd[] = "AT+CWJAP=\"Software_Dept\",\"SoftEng_Dept\"";
   esp8266.println(cmd);
   delay(4000);
   if (esp8266.find("OK")) {
@@ -174,8 +185,8 @@ void printResponse() {
 }
 
 void establishTCPConnection() {
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
-//  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
+//  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -198,9 +209,9 @@ void send() {
 
     esp8266.println("AT+CIPMUX=1");
     delay(500);
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
+//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
 //    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-//    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
@@ -218,9 +229,9 @@ void getData() {
   esp8266.println("AT+CIPMUX=1");
   delay(500);
 //
-  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
+//  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
 //  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-////  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
   delay(1000);
   String cmd = "GET /custom/5aa6a508f4ad6f09543c8a2b HTTP/1.1";
   esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));

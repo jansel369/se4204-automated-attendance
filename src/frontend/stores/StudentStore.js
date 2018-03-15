@@ -18,6 +18,7 @@ class StudentStore {
         name : '',
         passcode : '',
         email : '',
+        parent : '',
     }
     @observable loggedInUser = {
         idNumber : '',
@@ -25,15 +26,17 @@ class StudentStore {
         name : '',
         passcode : '',
         email : '',
+        parent : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "2:30";
-    @observable endTime = "5:30";
+    @observable startTime = "12:00";
+    @observable endTime = "2:00";
 
     constructor() {
         this.initialize();
         setInterval(async () => {
             await this.checktime();
+            // await this.sendParentalNotice();
         }, 5000);
     }
 
@@ -47,7 +50,8 @@ class StudentStore {
         await app.service('/api/students').create(this.newStudent);
         await app.service('/custom').patch(null, {email, name, passcode});
         // await this.sendEmail(email, name, passcode);
-        this.resetData();
+        await this.resetData();
+        // this.students.push(this.newStudent);
     }
 
     async login() {
@@ -66,6 +70,7 @@ class StudentStore {
             password : '',
             name : '',
             passcode : '',
+            parent : '',
         };
     }
 
@@ -109,7 +114,7 @@ class StudentStore {
 
     async logAbsentStudents() {
         const absenots = this.students.filter(student => !this.presentNames.includes(student.idNumber));
-        console.log("MGA DUNGOL: ", absenots);
+        // console.log("MGA DUNGOL: ", absenots);
         absenots.forEach(async (absentee) => {
             const createData = {
                 student : absentee,
@@ -137,6 +142,22 @@ class StudentStore {
             return {...student, attendance : presents.length, absents : absent.length};
         }));
     }
+
+    async sendParentalNotice(name, parent) {
+        await app.service('/custom').update('', {name : name, email : parent});
+    }
+
+    // async sendParentalNotice() {
+    //     console.log(this.absentStudents.slice(), ' MGAGMGAGA  GAGO');
+    //     const mgabwesit = await this.absentStudents.map(async (student) => {
+    //         const res = await app.service('/api/students').find({query : {idNumber : student}});
+    //         return res[0];
+    //     });
+    //     await mgabwesit.forEach(async (student) => {
+    //         console.log("LINTI: ", student);
+    //         await app.service('/custom').update('', {name : student.name, email : student.parent});
+    //     });
+    // }
     
  
     async initialize() {
@@ -154,7 +175,9 @@ class StudentStore {
         await this.retrieveStudents();
 
         app.service('/api/students').on('created', (newStudent) => {
-            this.students.push(newStudent);
+            // this.students.push(newStudent);
+            this.students.push({...newStudent, absents : 0, attendance : 0});
+            console.log('MGA STUDENTS: ', this.students.slice());
         });
 
         app.service('/custom').on('created', async (createdPass) => {
@@ -172,10 +195,10 @@ class StudentStore {
                     passcode : foundStudent[0].passcode,
                 }
                 await app.service('/api/logs').create(createData);
-                app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : foundStudent[0].name, msg : "SUCCESS"});
+                // app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : foundStudent[0].name, msg : "SUCCESS"});
             }
             else {
-                app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : "N/A", msg : "FAIL"});    
+                // app.service('/custom').update('5aa6a508f4ad6f09543c8a2b', {name : "N/A", msg : "FAIL"});    
             }
         });
 
