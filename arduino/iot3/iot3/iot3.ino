@@ -30,7 +30,7 @@ Keypad kpd = Keypad(makeKeymap(keyMap), rowPins, colPins, keypadRows, keypadCols
 // global constant
 const char ssid[] = "monkey";
 const char ssidPass[] = "pass551010";
-const char hostName[] = "http://192.168.254.102";
+const char hostName[] = "http://192.168.254.101";
 //const char ssid[] = "HUAWEI-E5373-E4F9";
 //const char ssidPass[] = "f1frd1ij";
 //const char hostName[] = "http://192.168.8.100";
@@ -186,7 +186,7 @@ void printResponse() {
 
 void establishTCPConnection() {
 //  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.8.100\",3000";
-  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.102\",3000";
+  const char cmd[] = "AT+CIPSTART=\"TCP\",\"192.168.254.101\",3000";
   esp8266.println(cmd);
   if (esp8266.find("OK")) {
 //    Serial.println("TCP Connection Ready.");
@@ -211,7 +211,7 @@ void send() {
     delay(500);
 //    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
 //    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+    esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.101\",3000");
     //192.168.10.148 -> lab
     //192.168.254.103 -> dianzel
     delay(500);
@@ -231,7 +231,7 @@ void getData() {
 //
 //  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.10.146\",3000");
 //  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.8.100\",3000");
-  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.102\",3000");
+  esp8266.println("AT+CIPSTART=4,\"TCP\",\"192.168.254.101\",3000");
   delay(1000);
   String cmd = "GET /custom/5aa6a508f4ad6f09543c8a2b HTTP/1.1";
   esp8266.println("AT+CIPSEND=4," + String(cmd.length() + 4));

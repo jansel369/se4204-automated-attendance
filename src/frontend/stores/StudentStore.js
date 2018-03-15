@@ -29,8 +29,8 @@ class StudentStore {
         parent : '',
     }
     @observable userHasLoggedIn = false;
-    @observable startTime = "12:00";
-    @observable endTime = "2:00";
+    @observable startTime = "2:05";
+    @observable endTime = "4:00";
 
     constructor() {
         this.initialize();
@@ -114,7 +114,7 @@ class StudentStore {
 
     async logAbsentStudents() {
         const absenots = this.students.filter(student => !this.presentNames.includes(student.idNumber));
-        // console.log("MGA DUNGOL: ", absenots);
+        console.log("MGA DUNGOL: ", absenots);
         absenots.forEach(async (absentee) => {
             const createData = {
                 student : absentee,
@@ -143,8 +143,8 @@ class StudentStore {
         }));
     }
 
-    async sendParentalNotice(name, parent) {
-        await app.service('/custom').update('', {name : name, email : parent});
+    async sendParentalNotice(name, parent, fail) {
+        await app.service('/custom').update('', {name : name, email : parent, fail : fail});
     }
 
     // async sendParentalNotice() {
