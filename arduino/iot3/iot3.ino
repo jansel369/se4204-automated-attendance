@@ -1,9 +1,14 @@
-//imported libraries
+ //imported libraries
 #include <SoftwareSerial.h>
 #include <Keypad.h>
 #include <LiquidCrystal_I2C.h>
+#include <Servo.h>
 
 static char respBuffer[4096];
+
+// LSERVO
+Servo servo;
+const byte servoPin = A0;
 
 
 //LCD
@@ -51,6 +56,8 @@ void setup() {
   esp8266.begin(115200);
   Serial.begin(115200);
 
+  servo.attach(servoPin);
+  
   setupLCD();  
   reset();
   setupConfiguration();
@@ -205,7 +212,6 @@ void getData() {
   esp8266.println(cmd);
   delay(500);
   esp8266.println("");
- 
 }
 
 void checkResponseValue() {

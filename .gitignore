@@ -5,3 +5,5 @@ dist
 public/js
 .DS_Store
 .DS_Store?
+yarn.lock
+yarn-error.log
