@@ -50,7 +50,7 @@ class RegisterContainer extends React.Component {
           onChange={
           (evt) => { setProperty(StudentStore.newStudent, 'password', evt.target.value); }
         }
-        /><br /> <br />
+        /><br /> 
         <TextInput
           name="register-field"
           className="register-field"
@@ -59,9 +59,19 @@ class RegisterContainer extends React.Component {
           onDOMChange={
             (evt) => { setProperty(StudentStore.newStudent, 'email', evt.target.value); }
           }
-        />
+        /> <br /> <br />
+        <TextInput
+          name="register-field"
+          className="register-field"
+          placeHolder="Parent Email Address"
+          value={StudentStore.newStudent.parent}
+          onDOMChange={
+            (evt) => { setProperty(StudentStore.newStudent, 'parent', evt.target.value); }
+          }
+        /> 
         <br />
         </form>
+        <br /> <br />
         <Box align="center">
           <Footer pad={{ vertical: 'medium' }}>
             <div>
